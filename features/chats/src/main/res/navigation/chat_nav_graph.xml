@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/chat_nav_graph"
+    app:startDestination="@id/chatListFragment">
+
+    <fragment
+        android:id="@+id/chatListFragment"
+        android:name="com.example.chats.ui.ChatListFragment"
+        android:label="fragment_chat_list"
+        tools:layout="@layout/fragment_chat_list" />
+</navigation>

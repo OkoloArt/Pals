@@ -1,0 +1,25 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "Hello World"
+include ':app'
+include ':core'
+include ':features'
+include ':features:settings'
+include ':core:data'
+include ':features:chats'
+include ':core:domain'
+include ':core:model'
+include ':core:common'
+include ':features:authentication'

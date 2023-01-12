@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="dashboard_nav_graph" type="id" />
+    <item name="images_nav_graph" type="id" />
+    <item name="billing_nav_graph" type="id" />
+    <item name="profile_nav_graph" type="id" />
+</resources>
