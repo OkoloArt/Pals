@@ -20,6 +20,7 @@
             <option value="$PROJECT_DIR$/features/authentication" />
             <option value="$PROJECT_DIR$/features/chats" />
             <option value="$PROJECT_DIR$/features/settings" />
+            <option value="$PROJECT_DIR$/uikit-kotlin" />
           </set>
         </option>
       </GradleProjectSettings>
