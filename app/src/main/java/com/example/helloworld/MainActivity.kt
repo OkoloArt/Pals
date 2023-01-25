@@ -2,8 +2,12 @@ package com.example.helloworld
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.cometchat.pro.core.AppSettings
+import com.cometchat.pro.core.CometChat
+import com.cometchat.pro.exceptions.CometChatException
 import com.example.helloworld.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity()
@@ -22,4 +26,5 @@ class MainActivity : AppCompatActivity()
         binding.bottomNavigationView.setupWithNavController(navController)
 
     }
+
 }

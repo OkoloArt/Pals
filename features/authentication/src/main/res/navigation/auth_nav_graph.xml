@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/introFragment"
+    app:startDestination="@id/signUpFragment"
     android:id="@+id/auth_nav_graph">
 
     <fragment
@@ -10,4 +10,9 @@
         android:name="com.example.authentication.ui.IntroFragment"
         android:label="fragment_intro"
         tools:layout="@layout/fragment_intro" />
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.example.authentication.ui.SignUpFragment"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_up" />
 </navigation>
