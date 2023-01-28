@@ -1,11 +1,14 @@
 package com.example.helloworld
 
 import android.app.Application
+import android.provider.SyncStateContract.Constants
 import android.util.Log
 import com.cometchat.pro.core.AppSettings
 import com.cometchat.pro.core.CometChat
 import com.cometchat.pro.exceptions.CometChatException
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class HelloWorldApplication : Application(){
 
     override fun onCreate() {
@@ -15,16 +18,13 @@ class HelloWorldApplication : Application(){
     }
 
     private fun initializeCometChat(){
-        val appID:String="231029536daec1f2"  // Replace with your App ID
-        val region:String="us"  // Replace with your App Region ("eu" or "us")
-
         val appSetting = AppSettings.AppSettingsBuilder()
-            .setRegion(region)
+            .setRegion(com.example.common.Constants.REGION)
             .subscribePresenceForAllUsers()
             .autoEstablishSocketConnection(true)
             .build();
 
-        CometChat.init(this , appID , appSetting , object : CometChat.CallbackListener<String>() {
+        CometChat.init(this , com.example.common.Constants.APP_ID , appSetting , object : CometChat.CallbackListener<String>() {
             override fun onSuccess(p0: String?) {
                 Log.d("TAG" , "Initialization completed successfully")
             }

@@ -6,21 +6,35 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.fragment.findNavController
 import com.cometchat.pro.core.CometChat
 import com.cometchat.pro.exceptions.CometChatException
 import com.cometchat.pro.models.User
 import com.example.authentication.R
 import com.example.authentication.databinding.FragmentSignUpBinding
+import com.example.authentication.viewmodel.CreateUserViewModel
+import com.example.common.result.Resource
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
  * Use the [SignUpFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
+@AndroidEntryPoint
 class SignUpFragment : Fragment()
 {
     private var _binding : FragmentSignUpBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel: CreateUserViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater , container: ViewGroup? ,
@@ -37,39 +51,29 @@ class SignUpFragment : Fragment()
         super.onViewCreated(view , savedInstanceState)
 
         binding.signUp.setOnClickListener {
-            signUpTapped()
+            val uid = binding.mobileNumber.editText?.text.toString()
+            val name = binding.password.editText?.text.toString()
+
+            registerUser(uid, name)
         }
     }
 
-    private fun signUpTapped() {
-        val user = User()
-        user.uid = "08144643504"
-        user.name = "Okolo"
-        registerUser(user)
-    }
+    private fun registerUser(uid:String, name: String){
+        viewModel.createUser(uid,name)
+       lifecycleScope.launch {
+           repeatOnLifecycle(Lifecycle.State.STARTED) {
+               viewModel.createUserState.collectLatest { result ->
+                   when (result) {
+                       is Resource.Loading -> {}
 
+                       is Resource.Success -> {
+                           Toast.makeText(requireContext(), "User Created Successfully", Toast.LENGTH_SHORT).show()
+                       }
 
-    private fun registerUser(user: User) {
-        CometChat.createUser(user , "87332f07829cb386f05f3695529fe06966bda1c1" , object : CometChat.CallbackListener<User>() {
-            override fun onSuccess(user: User) {
-                login(user)
-            }
-            override fun onError(e: CometChatException) {
-                Toast.makeText(requireContext() , e.localizedMessage , Toast.LENGTH_LONG).show()
-
-            }
-        })
-    }
-
-    private fun login(user: User) {
-        CometChat.login(user.uid , "87332f07829cb386f05f3695529fe06966bda1c1" , object : CometChat.CallbackListener<User?>() {
-            override fun onSuccess(user: User?) {
-                Toast.makeText(requireContext() , user!!.uid , Toast.LENGTH_LONG).show()
-
-            }
-            override fun onError(e: CometChatException) {
-                Toast.makeText(requireContext() , e.localizedMessage , Toast.LENGTH_LONG).show()
-            }
-        })
+                       is Resource.Error -> {}
+                   }
+               }
+           }
+       }
     }
 }
