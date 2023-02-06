@@ -2,7 +2,7 @@ package com.example.network.model.user
 
 import com.squareup.moshi.Json
 
-data class CreateUserResponse(
+data class UserResponse(
     @Json(name = "code")
     val code: Int? ,
     @Json(name = "data")

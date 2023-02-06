@@ -1,6 +1,6 @@
 package com.example.model
 
-data class CreateUser(
+data class User(
     val uid: String? ,
     val name: String? ,
     val status: String? ,
