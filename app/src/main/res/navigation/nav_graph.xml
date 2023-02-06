@@ -8,4 +8,5 @@
     <include app:graph="@navigation/chat_nav_graph" />
     <include app:graph="@navigation/settings_nav_graph" />
 
+
 </navigation>

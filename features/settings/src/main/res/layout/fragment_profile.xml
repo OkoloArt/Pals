@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.ProfileFragment">
 
     <androidx.cardview.widget.CardView
@@ -13,32 +13,32 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:background="@drawable/layout_background"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/layout_background">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_marginTop="10dp"
                 android:id="@+id/circleImageView"
                 android:layout_width="86dp"
                 android:layout_height="86dp"
+                android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:layout_marginTop="10dp"
-                android:text="Okolo Arthur"
-                android:gravity="center"
                 android:id="@+id/name_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Okolo Arthur"
                 app:layout_constraintTop_toBottomOf="@id/circleImageView" />
 
             <TextView
-                android:layout_marginTop="10dp"
                 android:id="@+id/number_textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:text="09121******"
                 app:layout_constraintTop_toBottomOf="@+id/name_textview" />
@@ -60,84 +60,84 @@
     </androidx.cardview.widget.CardView>
 
     <TextView
-        android:layout_marginTop="20dp"
-        android:text="Settings"
-        android:layout_marginLeft="12dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="20dp"
+        android:text="Settings" />
 
     <androidx.cardview.widget.CardView
-        android:layout_margin="12dp"
-        android:layout_marginTop="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:layout_marginTop="10dp">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/layout_background_two"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:text="Language"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content"/>
+                    android:text="Language" />
 
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:drawableEnd="@drawable/ic_arrow_right"
-                    android:text="English"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"/>
+                    android:text="English" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/layout_background_two"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:text="Dark Mode"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content"/>
+                    android:text="Dark Mode" />
 
-                <com.google.android.material.materialswitch.MaterialSwitch
+                <androidx.appcompat.widget.SwitchCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="true"/>
+                    android:checked="true" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:background="@drawable/layout_background_two"
-                android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/layout_background_two"
+                android:gravity="center"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:text="Only Download via Wi-Fi"
                     android:layout_width="0dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content"/>
+                    android:text="Only Download via Wi-Fi" />
 
-                <com.google.android.material.materialswitch.MaterialSwitch
+                <androidx.appcompat.widget.SwitchCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="true"/>
+                    android:checked="true" />
 
             </LinearLayout>
 
@@ -155,7 +155,7 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"/>
 
-                <com.google.android.material.materialswitch.MaterialSwitch
+                <androidx.appcompat.widget.SwitchCompat
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"/>
@@ -229,6 +229,7 @@
                     android:layout_height="wrap_content"/>
 
             </LinearLayout>
+
 
         </LinearLayout>
 

@@ -8,6 +8,6 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.settings.ui.ProfileFragment"
-        android:label="fragment_profile"
+        android:label="Profile"
         tools:layout="@layout/fragment_profile" />
 </navigation>

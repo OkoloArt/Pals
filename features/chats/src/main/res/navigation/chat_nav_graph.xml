@@ -7,7 +7,16 @@
 
     <fragment
         android:id="@+id/chatListFragment"
-        android:name="com.example.chats.ui.ChatListFragment"
+        android:name="com.example.chats.chats_list.ChatListFragment"
         android:label="fragment_chat_list"
-        tools:layout="@layout/fragment_chat_list" />
+        tools:layout="@layout/fragment_chat_list" >
+        <action
+            android:id="@+id/action_chatListFragment_to_friendsListFragment"
+            app:destination="@id/friendsListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/friendsListFragment"
+        android:name="com.example.chats.friends.FriendsListFragment"
+        android:label="fragment_friends_list"
+        tools:layout="@layout/fragment_friends_list" />
 </navigation>

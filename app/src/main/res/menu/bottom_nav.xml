@@ -11,12 +11,7 @@
         android:id="@id/chat_nav_graph"
         android:title="Chats"
         app:showAsAction="ifRoom"/>
-
-    <item
-        android:id="@id/auth_nav_graph"
-        android:title="Call"
-        app:showAsAction="ifRoom" />
-
+    
     <item
         android:id="@id/settings_nav_graph"
         android:title="Profile"
