@@ -1,7 +1,7 @@
 package com.example.domain.use_case.friends_use_case
 
 import com.example.common.result.Resource
-import com.example.data.friend_repository.FriendsRepository
+import com.example.data.repository.friend_repository.FriendsRepository
 import com.example.model.Friends
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

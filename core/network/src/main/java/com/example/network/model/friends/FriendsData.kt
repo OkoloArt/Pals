@@ -2,7 +2,7 @@ package com.example.network.model.friends
 
 import com.squareup.moshi.Json
 
-data class Data (
+data class FriendsData (
     @Json(name = "uid")
     val uid: String?,
     @Json(name = "name")

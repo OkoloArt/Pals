@@ -15,8 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class FriendsViewModel @Inject constructor(private val friendListUseCase: FriendListUseCase ) : ViewModel() {
 
-    private var _FriendsList = MutableLiveData<Resource<List<Friends>>>()
-    val friendsList: LiveData<Resource<List<Friends>>> get() = _FriendsList
+    private var _friendsList = MutableLiveData<Resource<List<Friends>>>()
+    val friendsList: LiveData<Resource<List<Friends>>> get() = _friendsList
 
     init {
         getFriendsList("09121338526")
@@ -27,7 +27,7 @@ class FriendsViewModel @Inject constructor(private val friendListUseCase: Friend
             when(result){
                 is Resource.Loading -> {}
                 is Resource.Success -> {
-                    _FriendsList.value = result
+                    _friendsList.value = result
                 }
                 is Resource.Error -> {}
             }

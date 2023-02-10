@@ -6,7 +6,7 @@ data class UserResponse(
     @Json(name = "code")
     val code: Int? ,
     @Json(name = "data")
-    val data: Data ,
+    val userData: UserData ,
     @Json(name = "message")
     val message: String? ,
     @Json(name = "status")

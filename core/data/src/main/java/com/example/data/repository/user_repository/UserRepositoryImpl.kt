@@ -1,4 +1,4 @@
-package com.example.data.user_repository
+package com.example.data.repository.user_repository
 
 import com.example.common.result.Resource
 import com.example.data.model.toCreateUser
@@ -10,7 +10,9 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class UserRepositoryImpl @Inject constructor(private val helloWorldApi: HelloWorldApi) : UserRepository{
+class UserRepositoryImpl @Inject constructor(private val helloWorldApi: HelloWorldApi) :
+    UserRepository
+{
 
     override fun createUser(uid: String , name: String): Flow<Resource<User>> = flow {
 

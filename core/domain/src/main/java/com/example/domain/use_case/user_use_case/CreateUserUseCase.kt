@@ -1,7 +1,7 @@
 package com.example.domain.use_case.user_use_case
 
 import com.example.common.result.Resource
-import com.example.data.user_repository.UserRepository
+import com.example.data.repository.user_repository.UserRepository
 import com.example.model.User
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

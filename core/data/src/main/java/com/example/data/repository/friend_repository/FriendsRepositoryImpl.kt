@@ -1,4 +1,4 @@
-package com.example.data.friend_repository
+package com.example.data.repository.friend_repository
 
 import com.example.common.result.Resource
 import com.example.data.model.toFriends
@@ -10,7 +10,9 @@ import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 
-class FriendsRepositoryImpl @Inject constructor(private val helloWorldApi: HelloWorldApi) : FriendsRepository {
+class FriendsRepositoryImpl @Inject constructor(private val helloWorldApi: HelloWorldApi) :
+    FriendsRepository
+{
 
     override fun getFriendsList(uid: String): Flow<Resource<List<Friends>>> = flow {
 
