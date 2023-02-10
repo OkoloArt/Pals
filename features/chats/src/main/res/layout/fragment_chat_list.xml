@@ -5,9 +5,17 @@
     android:layout_height="match_parent"
     tools:context=".chats_list.ChatListFragment">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
+        android:id="@+id/chat_list_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="?actionBarSize" />
+
     <Button
         android:id="@+id/add_chat"
         android:text="+"
+        android:layout_below="@id/chat_list_recyclerview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 

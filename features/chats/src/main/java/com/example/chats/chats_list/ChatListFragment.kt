@@ -5,10 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chats.R
 import com.example.chats.databinding.FragmentChatListBinding
+import com.example.chats.friends.FriendListAdapter
+import com.example.chats.viewmodel.ChatViewModel
+import com.example.common.result.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
@@ -21,6 +28,10 @@ class ChatListFragment : Fragment()
 
     private var _binding: FragmentChatListBinding? = null
     private val binding get() = _binding!!
+
+    private val viewModel : ChatViewModel by viewModels()
+
+    private lateinit var chatAdapter: ChatAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater , container: ViewGroup? ,
@@ -36,6 +47,28 @@ class ChatListFragment : Fragment()
 
         binding.addChat.setOnClickListener {
             findNavController().navigate(R.id.action_chatListFragment_to_friendsListFragment)
+        }
+
+        setUpRecyclerView()
+    }
+
+    private fun setUpRecyclerView(){
+        lifecycleScope.launch {
+            viewModel.conversationList.observe(viewLifecycleOwner){ result ->
+                when (result){
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
+                        result.data?.let{ conversations ->
+                            chatAdapter = ChatAdapter(conversations.toSet().toList()){}
+                            binding.chatListRecyclerview.apply {
+                                layoutManager =  LinearLayoutManager(requireContext() , LinearLayoutManager.VERTICAL , false)
+                                adapter = chatAdapter
+                            }
+                        }
+                    }
+                    is Resource.Error -> {}
+                }
+            }
         }
     }
 

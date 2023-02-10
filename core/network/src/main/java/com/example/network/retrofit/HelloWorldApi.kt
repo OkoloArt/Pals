@@ -1,5 +1,6 @@
 package com.example.network.retrofit
 
+import com.example.network.model.conversations.ConversationResponse
 import com.example.network.model.friends.FriendResponse
 import com.example.network.model.user.UserResponse
 import retrofit2.http.Field
@@ -21,4 +22,7 @@ interface HelloWorldApi {
     suspend fun getFriendsList(
         @Path("uid") uid: String
     ): FriendResponse
+
+    @GET("conversations")
+    suspend fun getConversation(): ConversationResponse
 }
