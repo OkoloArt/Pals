@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chats.databinding.ChatListBinding
 import com.example.model.Conversations
+import com.squareup.picasso.Picasso
 
 class ChatAdapter(private val dataSet: List<Conversations> , private val onItemClicked: (Conversations) -> Unit) :
     RecyclerView.Adapter<ChatAdapter.ChatViewHolder>(){
@@ -12,6 +13,9 @@ class ChatAdapter(private val dataSet: List<Conversations> , private val onItemC
     inner class ChatViewHolder(private val binding: ChatListBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(conversations: Conversations){
             binding.lastMessage.text = conversations.lastMessage
+            binding.receiverName.text = conversations.receiver_name
+            binding.unreadCount.text = conversations.unreadMessageCount
+            Picasso.get().load(conversations.receiver_image).into(binding.receiverImage)
         }
     }
 

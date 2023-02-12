@@ -32,6 +32,8 @@ fun ConversationData.toConversations(): Conversations {
     return Conversations(
             conversationId ,
             unreadMessageCount ,
-            lastMessage = this.lastMessage?.data?.text
+            lastMessage = this.lastMessage?.data?.text,
+            receiver_name = this.conversationWith?.name,
+            receiver_image = this.conversationWith?.avatar
     )
 }

@@ -1,14 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:paddingTop="10dp"
+    android:layout_height="wrap_content">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/receiver_image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"/>
+
+    <LinearLayout
+        android:layout_marginLeft="10dp"
+        android:layout_centerInParent="true"
+        android:id="@+id/name_message_layout"
+        android:layout_toRightOf="@id/receiver_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/receiver_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="........" />
+
+        <TextView
+            android:id="@+id/last_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="........" />
+
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/last_message"
-        android:layout_width="match_parent"
-        android:text="........"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_height="wrap_content"/>
+       android:layout_alignParentEnd="true"
+        android:id="@+id/unread_count"
+        android:layout_width="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content"
+        android:text="........" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>

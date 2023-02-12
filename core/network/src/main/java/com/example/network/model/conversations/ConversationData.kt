@@ -9,6 +9,19 @@ data class ConversationData(
     val unreadMessageCount: String?,
     @Json(name = "lastMessage")
     val lastMessage: LastMessage?,
+    @Json(name = "conversationWith")
+    val conversationWith: ConversationWith?,
+)
+
+data class ConversationWith(
+    @Json(name = "uid")
+    val uid: String?,
+    @Json(name = "name")
+    val name: String?,
+    @Json(name = "avatar")
+    val avatar: String?,
+    @Json(name = "status")
+    val status: String?,
 )
 
 data class LastMessage(
