@@ -2,7 +2,11 @@ package com.example.helloworld
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.view.View
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.cometchat.pro.core.AppSettings
@@ -26,6 +30,17 @@ class MainActivity : AppCompatActivity()
         val navController = navHostFragment.navController
 
         binding.bottomNavigationView.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _ , nd: NavDestination , _ ->
+            // the IDs of fragments as defined in the `navigation_graph`
+                if (nd.id == com.example.authentication.R.id.signUpFragment || nd.id == com.example.chats.R.id.chatListFragment || nd.id == com.example.settings.R.id.profileFragment) {
+                    Handler(Looper.getMainLooper()).postDelayed(
+                            { binding.bottomNavigationView.visibility = View.VISIBLE
+                                supportActionBar?.show()} , 200)
+                } else {
+                    binding.bottomNavigationView.visibility = View.GONE
+                }
+        }
 
     }
 

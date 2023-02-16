@@ -13,10 +13,18 @@
         <action
             android:id="@+id/action_chatListFragment_to_friendsListFragment"
             app:destination="@id/friendsListFragment" />
+        <action
+            android:id="@+id/action_chatListFragment_to_messageFragment"
+            app:destination="@id/messageFragment" />
     </fragment>
     <fragment
         android:id="@+id/friendsListFragment"
         android:name="com.example.chats.friends.FriendsListFragment"
         android:label="fragment_friends_list"
         tools:layout="@layout/fragment_friends_list" />
+    <fragment
+        android:id="@+id/messageFragment"
+        android:name="com.example.chats.messages.MessageFragment"
+        android:label="fragment_message"
+        tools:layout="@layout/fragment_message" />
 </navigation>

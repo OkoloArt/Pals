@@ -59,7 +59,9 @@ class ChatListFragment : Fragment()
                     is Resource.Loading -> {}
                     is Resource.Success -> {
                         result.data?.let{ conversations ->
-                            chatAdapter = ChatAdapter(conversations.toSet().toList()){}
+                            chatAdapter = ChatAdapter(conversations){
+                                findNavController().navigate(R.id.action_chatListFragment_to_messageFragment)
+                            }
                             binding.chatListRecyclerview.apply {
                                 layoutManager =  LinearLayoutManager(requireContext() , LinearLayoutManager.VERTICAL , false)
                                 adapter = chatAdapter

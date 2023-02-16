@@ -26,6 +26,9 @@ class ChatAdapter(private val dataSet: List<Conversations> , private val onItemC
     override fun onBindViewHolder(holder: ChatViewHolder , position: Int) {
         val current = dataSet[position]
         holder.bind(current)
+        holder.itemView.setOnClickListener {
+            onItemClicked(current)
+        }
     }
 
     override fun getItemCount(): Int = dataSet.size
