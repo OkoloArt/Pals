@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chats.R
 import com.example.chats.databinding.FragmentMessageBinding
 
@@ -19,6 +20,8 @@ class MessageFragment : Fragment() {
     private var _binding : FragmentMessageBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var messageAdapter: MessageAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater , container: ViewGroup? ,
         savedInstanceState: Bundle? ,
@@ -30,5 +33,17 @@ class MessageFragment : Fragment() {
 
     override fun onViewCreated(view: View , savedInstanceState: Bundle?) {
         super.onViewCreated(view , savedInstanceState)
+
+        setUpRecyclerView()
     }
+
+    private fun setUpRecyclerView(){
+        val messages = DataSource().loadDummyMessage()
+        messageAdapter = MessageAdapter(messages){}
+        binding.messageListRecyclerview.apply {
+            layoutManager =  LinearLayoutManager(requireContext() , LinearLayoutManager.VERTICAL , false)
+            adapter = messageAdapter
+        }
+    }
+
 }
