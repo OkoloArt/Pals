@@ -1,6 +1,7 @@
 package com.example.network.model.conversations
 
 import com.squareup.moshi.Json
+import java.io.Serializable
 
 data class ConversationData(
     @Json(name = "conversationId")

@@ -4,6 +4,8 @@ import com.example.data.repository.conversation_repository.ConversationRepositor
 import com.example.data.repository.conversation_repository.ConversationRepositoryImpl
 import com.example.data.repository.friend_repository.FriendsRepository
 import com.example.data.repository.friend_repository.FriendsRepositoryImpl
+import com.example.data.repository.message_repository.MessageRepository
+import com.example.data.repository.message_repository.MessageRepositoryImpl
 import com.example.data.repository.user_repository.UserRepository
 import com.example.data.repository.user_repository.UserRepositoryImpl
 import dagger.Binds
@@ -24,4 +26,7 @@ interface DataModule {
 
     @Binds
     fun conversationRepository(conversationRepositoryImpl: ConversationRepositoryImpl) : ConversationRepository
+
+    @Binds
+    fun messageRepository(messageRepositoryImpl: MessageRepositoryImpl) : MessageRepository
 }

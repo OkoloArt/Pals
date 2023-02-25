@@ -2,6 +2,7 @@ package com.example.network.retrofit
 
 import com.example.network.model.conversations.ConversationResponse
 import com.example.network.model.friends.FriendResponse
+import com.example.network.model.messages.MessageResponse
 import com.example.network.model.user.UserResponse
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -25,4 +26,9 @@ interface HelloWorldApi {
 
     @GET("conversations")
     suspend fun getConversation(): ConversationResponse
+
+    @GET("users/{uid}/messages")
+    suspend fun getMessages(
+        @Path("uid") uid: String
+    ): MessageResponse
 }

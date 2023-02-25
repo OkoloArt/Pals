@@ -1,5 +1,6 @@
 package com.example.model
 
 data class Message(
-    val receiver : String?,
-    val sender : String?)
+    val receiverMessage : String?,
+    val senderMessage : String?,
+)

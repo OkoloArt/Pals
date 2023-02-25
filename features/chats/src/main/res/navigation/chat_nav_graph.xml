@@ -26,5 +26,9 @@
         android:id="@+id/messageFragment"
         android:name="com.example.chats.messages.MessageFragment"
         android:label="fragment_message"
-        tools:layout="@layout/fragment_message" />
+        tools:layout="@layout/fragment_message" >
+        <argument
+            android:name="conversation"
+            app:argType="com.example.model.Conversations" />
+    </fragment>
 </navigation>

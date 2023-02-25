@@ -14,13 +14,13 @@ class MessageAdapter(private val dataSet: List<Message> , private val onItemClic
     inner class MessageViewHolder(private val binding: MessageListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(message: Message) {
-            if (message.receiver!!.isBlank()){
+            if (message.receiverMessage!!.isBlank()){
                 binding.receiverMessage.visibility = View.GONE
-            }else if (message.sender!!.isBlank()){
+            }else if (message.senderMessage!!.isBlank()){
                 binding.senderMessage.visibility = View.GONE
             }
-            binding.receiverMessage.text = message.receiver
-            binding.senderMessage.text = message.sender
+            binding.receiverMessage.text = message.receiverMessage
+            binding.senderMessage.text = message.senderMessage
         }
     }
 

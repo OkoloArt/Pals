@@ -2,9 +2,11 @@ package com.example.data.model
 
 import com.example.model.Conversations
 import com.example.model.Friends
+import com.example.model.Message
 import com.example.model.User
 import com.example.network.model.conversations.ConversationData
 import com.example.network.model.friends.FriendsData
+import com.example.network.model.messages.MessageData
 import com.example.network.model.user.UserResponse
 
 fun UserResponse.toCreateUser(): User {
@@ -34,6 +36,24 @@ fun ConversationData.toConversations(): Conversations {
             unreadMessageCount ,
             lastMessage = this.lastMessage?.data?.text,
             receiver_name = this.conversationWith?.name,
-            receiver_image = this.conversationWith?.avatar
+            receiver_image = this.conversationWith?.avatar,
+            status = this.conversationWith?.status
     )
+}
+
+fun MessageData.toMessages() : Message{
+    return when (this.sender) {
+        "09121338526" -> {
+            Message(
+                    receiverMessage = "",
+                    senderMessage  = this.data?.text
+            )
+        }
+        else -> {
+            Message(
+                    receiverMessage = this.data?.text,
+                    senderMessage = ""
+            )
+        }
+    }
 }
