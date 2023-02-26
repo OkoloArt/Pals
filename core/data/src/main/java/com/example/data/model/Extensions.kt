@@ -41,19 +41,26 @@ fun ConversationData.toConversations(): Conversations {
     )
 }
 
+//fun MessageData.toMessages() : Message{
+//    return when (this.sender) {
+//        "09121338526" -> {
+//            Message(
+//                    receiverMessage = "",
+//                    senderMessage  = this.data?.text
+//            )
+//        }
+//        else -> {
+//            Message(
+//                    receiverMessage = this.data?.text,
+//                    senderMessage = ""
+//            )
+//        }
+//    }
+//}
+
 fun MessageData.toMessages() : Message{
-    return when (this.sender) {
-        "09121338526" -> {
-            Message(
-                    receiverMessage = "",
-                    senderMessage  = this.data?.text
-            )
-        }
-        else -> {
-            Message(
-                    receiverMessage = this.data?.text,
-                    senderMessage = ""
-            )
-        }
-    }
+    return Message(
+            message = this.data?.text,
+            uid = this.sender
+    )
 }

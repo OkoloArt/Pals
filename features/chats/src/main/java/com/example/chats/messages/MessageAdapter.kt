@@ -3,37 +3,43 @@ package com.example.chats.messages
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chats.databinding.MessageListBinding
+import com.example.chats.R
+import com.example.common.Constants.MESSAGE_TYPE_LEFT
+import com.example.common.Constants.MESSAGE_TYPE_RIGHT
 import com.example.model.Message
 
 class MessageAdapter(private val dataSet: List<Message> , private val onItemClicked: (Message) -> Unit) :
-    RecyclerView.Adapter<MessageAdapter.MessageViewHolder>()
-{
+    RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
 
-    inner class MessageViewHolder(private val binding: MessageListBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        fun bind(message: Message) {
-            if (message.receiverMessage!!.isBlank()){
-                binding.receiverMessage.visibility = View.GONE
-            }else if (message.senderMessage!!.isBlank()){
-                binding.senderMessage.visibility = View.GONE
-            }
-            binding.receiverMessage.text = message.receiverMessage
-            binding.senderMessage.text = message.senderMessage
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val txtUserName: TextView = view.findViewById(R.id.tvMessage)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup , viewType: Int): MessageAdapter.ViewHolder {
+        return if (viewType == MESSAGE_TYPE_RIGHT) {
+            val view =
+                LayoutInflater.from(parent.context).inflate(R.layout.message_right , parent , false)
+            ViewHolder(view)
+        } else {
+            val view =
+                LayoutInflater.from(parent.context).inflate(R.layout.message_left, parent, false)
+            ViewHolder(view)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup , viewType: Int): MessageViewHolder {
-        return MessageViewHolder(MessageListBinding.inflate(LayoutInflater.from(parent.context)))
-    }
-
-    override fun onBindViewHolder(holder: MessageViewHolder , position: Int)
+    override fun onBindViewHolder(holder: ViewHolder , position: Int)
     {
         val current = dataSet[position]
-        holder.bind(current)
-        holder.itemView.setOnClickListener {
-            onItemClicked(current)
+        holder.txtUserName.text = current.message
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if (dataSet[position].uid!! == "09121338526"){
+            MESSAGE_TYPE_RIGHT
+        }else{
+            MESSAGE_TYPE_LEFT
         }
     }
 

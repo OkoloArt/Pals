@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="end"
+    android:orientation="horizontal"
+    android:paddingTop="10dp">
+
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/item_right_side_background"
+        android:padding="5dp"
+        android:textColor="@color/colorAccent"
+        android:textSize="16sp"
+        tools:text="farhan" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:src="@drawable/ic_outline_person"
+        android:id="@+id/userImage"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="10dp" />
+
+</LinearLayout>
+

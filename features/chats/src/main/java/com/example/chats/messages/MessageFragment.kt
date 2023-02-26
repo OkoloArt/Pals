@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.chats.R
 import com.example.chats.databinding.FragmentMessageBinding
 import com.example.chats.viewmodel.MessageViewModel
 import com.example.common.result.Resource
@@ -57,7 +56,7 @@ class MessageFragment : Fragment() {
                 is Resource.Success -> {
                     result.data?.let { messages ->
                         messageAdapter = MessageAdapter(messages){}
-                        binding.messageListRecyclerview.apply {
+                        binding.messageRecyclerView.apply {
                             layoutManager =  LinearLayoutManager(requireContext() , LinearLayoutManager.VERTICAL , false)
                             adapter = messageAdapter
                         }
@@ -69,9 +68,8 @@ class MessageFragment : Fragment() {
     }
 
     private fun setUpReceiverDetails(conversations: Conversations){
-
         binding.apply {
-            Picasso.get().load(conversations.receiver_image).into(receiverProfileImage)
+            Picasso.get().load(conversations.receiver_image).into(profileImage)
             receiverName.text = conversations.receiver_name
             receiverStatus.text = conversations.status
         }

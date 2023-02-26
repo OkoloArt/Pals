@@ -23,22 +23,22 @@ class ChatViewModel @Inject constructor(private val conversationListUseCase: Con
 //    private var _conversationList = MutableLiveData<Resource<List<Conversations>>>()
 //    val conversationList: LiveData<Resource<List<Conversations>>> get() = _conversationList
 
-    private var _conversationList = MutableLiveData<Resource<List<Conversations>>>()
-    val conversationList : LiveData<Resource<List<Conversations>>> get() = _conversationList
+//    init {
+//        getConversation()
+//    }
 
-    init {
-        getConversation()
-    }
+//    private fun getConversation() {
+//        conversationListUseCase().onEach { result ->
+//            when(result){
+//                is Resource.Loading -> {}
+//                is Resource.Success -> {
+//                    _conversationList.send(result)
+//                }
+//                is Resource.Error -> {}
+//            }
+//        }.launchIn(viewModelScope)
+//    }
 
-    private fun getConversation(){
-        conversationListUseCase().onEach { result ->
-            when(result){
-                is Resource.Loading -> {}
-                is Resource.Success -> {
-                    _conversationList.value = result
-                }
-                is Resource.Error -> {}
-            }
-        }.launchIn(viewModelScope)
-    }
+     fun getConversation() : Flow<Resource<List<Conversations>>> = conversationListUseCase()
+
 }

@@ -20,7 +20,7 @@ class MessageViewModel @Inject constructor(private val messageUseCase: MessageUs
     val messages: LiveData<Resource<List<Message>>> get() = _messages
 
     init {
-        getMessages("superhero4")
+        getMessages("superhero1")
     }
 
     private fun getMessages(uid : String){

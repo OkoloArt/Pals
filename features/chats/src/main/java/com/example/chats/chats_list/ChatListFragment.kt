@@ -59,24 +59,30 @@ class ChatListFragment : Fragment()
 
     private fun setUpRecyclerView(){
         lifecycleScope.launch {
-                viewModel.conversationList.observe(viewLifecycleOwner) { result ->
-                    when (result){
+                viewModel.getConversation().collect { result ->
+                    when (result) {
                         is Resource.Loading -> {
-                            Toast.makeText(requireContext(), " Testing", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext() , " Testing" , Toast.LENGTH_SHORT)
+                                .show()
                         }
                         is Resource.Success -> {
-                            result.data?.let{ conversations ->
-                                chatAdapter = ChatAdapter(conversations){ conversation ->
-                                    val action = ChatListFragmentDirections.actionChatListFragmentToMessageFragment(conversation)
+                            result.data?.let { conversations ->
+                                chatAdapter = ChatAdapter(conversations) { conversation ->
+                                    val action =
+                                        ChatListFragmentDirections.actionChatListFragmentToMessageFragment(
+                                                conversation)
                                     findNavController().navigate(action)
                                 }
                                 binding.chatListRecyclerview.apply {
-                                    layoutManager =  LinearLayoutManager(requireContext() , LinearLayoutManager.VERTICAL , false)
+                                    layoutManager = LinearLayoutManager(requireContext() ,
+                                                                        LinearLayoutManager.VERTICAL ,
+                                                                        false)
                                     adapter = chatAdapter
                                 }
                             }
                         }
-                        is Resource.Error -> {}
+                        is Resource.Error -> {
+                        }
                     }
                 }
         }
