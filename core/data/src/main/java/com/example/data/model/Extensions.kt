@@ -7,6 +7,8 @@ import com.example.model.User
 import com.example.network.model.conversations.ConversationData
 import com.example.network.model.friends.FriendsData
 import com.example.network.model.messages.MessageData
+import com.example.network.model.messages.SendMessageData
+import com.example.network.model.messages.SendMessageResponse
 import com.example.network.model.user.UserResponse
 
 fun UserResponse.toCreateUser(): User {
@@ -27,6 +29,13 @@ fun FriendsData.toFriends(): Friends {
             status ,
             avatar ,
             conversationId
+    )
+}
+
+fun SendMessageResponse.toMessage() : Message{
+    return Message(
+            message = this.sendMessageData.data?.text,
+            uid = this.sendMessageData.id
     )
 }
 
