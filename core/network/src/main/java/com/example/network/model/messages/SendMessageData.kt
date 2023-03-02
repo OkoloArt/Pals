@@ -16,5 +16,5 @@ data class SendData(
 
 data class MessageDataObject(
     @Json(name = "text")
-    val text: String?,
+    val text: String?
 )

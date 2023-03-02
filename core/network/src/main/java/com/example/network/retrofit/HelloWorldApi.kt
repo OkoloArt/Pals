@@ -7,12 +7,8 @@ import com.example.network.model.messages.MessageResponse
 import com.example.network.model.messages.Receiver
 import com.example.network.model.messages.SendMessageResponse
 import com.example.network.model.user.UserResponse
-import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import okhttp3.MultipartBody
+import retrofit2.http.*
 
 interface HelloWorldApi {
 
@@ -36,13 +32,13 @@ interface HelloWorldApi {
         @Path("uid") uid: String
     ): MessageResponse
 
-    @FormUrlEncoded
+    @Multipart
     @POST("messages")
     suspend fun sendMessage(
-        @Field("receiver") receiver: String ,
-        @Field("receiverType") receiverType: String ,
-        @Field("category") category: String ,
-        @Field("type") type: String ,
-        @Body messageDataObject: MessageDataObject
+        @Part receiver: MultipartBody.Part ,
+        @Part receiverType: MultipartBody.Part ,
+        @Part category: MultipartBody.Part ,
+        @Part type: MultipartBody.Part ,
+        @Part dataObject: MultipartBody.Part
     ): SendMessageResponse
 }

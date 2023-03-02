@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chats.databinding.FragmentMessageBinding
@@ -14,6 +16,8 @@ import com.example.common.result.Resource
 import com.example.model.Conversations
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 
 /**
@@ -47,22 +51,31 @@ class MessageFragment : Fragment() {
         val receiverDetail = safeArgs.conversation
         setUpRecyclerView()
         setUpReceiverDetails(receiverDetail)
+
+        binding.sendMessage.setOnClickListener {
+            sendMessage()
+        }
     }
 
     private fun setUpRecyclerView(){
-        messageViewModel.messages.observe(viewLifecycleOwner){ result ->
-            when(result){
-                is Resource.Loading -> {}
-                is Resource.Success -> {
-                    result.data?.let { messages ->
-                        messageAdapter = MessageAdapter(messages){}
-                        binding.messageRecyclerView.apply {
-                            layoutManager =  LinearLayoutManager(requireContext() , LinearLayoutManager.VERTICAL , false)
-                            adapter = messageAdapter
+        lifecycleScope.launch {
+            messageViewModel.getMessages("superhero1")
+            messageViewModel.messages.observe(viewLifecycleOwner) { result ->
+                when(result){
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
+                        result.data?.let { messages ->
+                            messageAdapter = MessageAdapter(messages){}
+                            binding.messageRecyclerView.apply {
+                                layoutManager =  LinearLayoutManager(requireContext() , LinearLayoutManager.VERTICAL , false)
+                                scrollToPosition(messages.size-1)
+                                setHasFixedSize(true)
+                                adapter = messageAdapter
+                            }
                         }
                     }
+                    is Resource.Error ->{}
                 }
-                is Resource.Error ->{}
             }
         }
     }
@@ -72,6 +85,21 @@ class MessageFragment : Fragment() {
             Picasso.get().load(conversations.receiver_image).into(profileImage)
             receiverName.text = conversations.receiver_name
             receiverStatus.text = conversations.status
+        }
+    }
+
+    private fun sendMessage(){
+        val message = binding.messageEdittext.editText?.text.toString()
+        lifecycleScope.launch{
+            messageViewModel.setValue("superhero1","user","message","text",message)
+            messageViewModel.sendMessage().collect { result ->
+                when (result) {
+                    is Resource.Loading -> {}
+                    is Resource.Success -> { Toast.makeText(requireContext(),"Message Sent", Toast.LENGTH_SHORT).show() }
+                    is Resource.Error -> {}
+                }
+            }
+           setUpRecyclerView()
         }
     }
 

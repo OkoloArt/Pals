@@ -6,8 +6,14 @@ import com.example.data.model.toMessages
 import com.example.model.Message
 import com.example.network.model.messages.MessageDataObject
 import com.example.network.retrofit.HelloWorldApi
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -27,11 +33,26 @@ class MessageRepositoryImpl @Inject constructor(private val helloWorldApi: Hello
         }
     }
 
-    override fun sendMessage(receiver: String , receiverType: String , category: String , type: String , messageDataObject: MessageDataObject ,
-    ): Flow<Resource<Message>>  = flow {
+    override fun sendMessage(receiver: String , receiverType: String , category: String , type: String , text: String): Flow<Resource<Message>>  = flow {
         try {
+
+            val exampleMessage = MessageDataObject(text)
+
+            val gson = Gson()
+            val body = MultipartBody.Part.createFormData(
+                    "data", null, gson.toJson(exampleMessage).toRequestBody("application/json".toMediaTypeOrNull())
+            )
+
+            val receiverPart = MultipartBody.Part.createFormData(name = "receiver", value = receiver)
+
+            val categoryPart = MultipartBody.Part.createFormData(name = "category", value = category)
+
+            val typePart = MultipartBody.Part.createFormData(name = "type", value = type)
+
+            val receiverTypePart = MultipartBody.Part.createFormData(name = "receiverType", value = receiverType)
+
             emit(Resource.Loading())
-            val message = helloWorldApi.sendMessage(receiver, receiverType, category, type, messageDataObject).toMessage()
+            val message = helloWorldApi.sendMessage(receiverPart, receiverTypePart, categoryPart, typePart, body).toMessage()
             emit(Resource.Success(message))
 
         }catch (e: HttpException) {

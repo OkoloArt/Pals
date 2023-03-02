@@ -9,5 +9,5 @@ interface MessageRepository {
 
     fun getMessages(uid : String) : Flow<Resource<List<Message>>>
 
-    fun sendMessage(receiver: String ,receiverType: String, category: String, type: String , messageDataObject: MessageDataObject) : Flow<Resource<Message>>
+    fun sendMessage(receiver: String ,receiverType: String, category: String, type: String , text: String) : Flow<Resource<Message>>
 }
