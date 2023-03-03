@@ -5,28 +5,35 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.common.result.Resource
+import com.example.domain.use_case.message_use_case.HandleReceiveMessageUseCase
 import com.example.domain.use_case.message_use_case.MessageUseCase
+import com.example.domain.use_case.message_use_case.ObserveConnectionUseCase
 import com.example.domain.use_case.message_use_case.SendMessageUseCase
-import com.example.model.Message
+import com.example.model.Messages
+import com.tinder.scarlet.WebSocket
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
+import com.tinder.scarlet.Message as MessageScarlet
 
 @HiltViewModel
 class MessageViewModel @Inject constructor(
     private val messageUseCase: MessageUseCase ,
-    private val sendMessageUseCase: SendMessageUseCase ,
+    private val sendMessageUseCase: SendMessageUseCase,
+    private val observeConnectionUseCase: ObserveConnectionUseCase,
+    private val handleReceiveMessageUseCase: HandleReceiveMessageUseCase
+
 ) : ViewModel()
 {
 
-    private var _messages = MutableLiveData<Resource<List<Message>>>()
-    val messages: LiveData<Resource<List<Message>>> get() = _messages
+    private var _messages = MutableLiveData<Resource<List<Messages>>>()
+    val messages: LiveData<Resource<List<Messages>>> get() = _messages
 
 
-    private var _message = MutableLiveData<Resource<Message>>()
-    val message: LiveData<Resource<Message>> get() = _message
+    private var _message = MutableLiveData<Resource<Messages>>()
+    val message: LiveData<Resource<Messages>> get() = _message
 
     private lateinit var _receiver: String
     val receiver get() = _receiver
@@ -43,6 +50,9 @@ class MessageViewModel @Inject constructor(
     private lateinit var _text: String
     val text get() = _text
 
+    private var _messageScarlet = MutableLiveData<MessageScarlet?>()
+    val messageScarlet: LiveData<MessageScarlet?> get() = _messageScarlet
+
     fun setValue(receiver: String , receiverType: String , category: String , type: String , text: String , ) {
         _receiver = receiver
         _receiverType = receiverType
@@ -51,11 +61,12 @@ class MessageViewModel @Inject constructor(
         _text = text
     }
 
-//    init {
-//    //    getMessages("superhero1")
-//
-//    }
-//
+    init {
+    //    getMessages("superhero1")
+      //  val response = observeConnection()
+
+    }
+
      fun getMessages(uid : String){
         messageUseCase(uid).onEach { result ->
             when(result){
@@ -78,9 +89,15 @@ class MessageViewModel @Inject constructor(
 //        }.launchIn(viewModelScope)
 //    }
 
-    fun sendMessage(): Flow<Resource<Message>> = sendMessageUseCase(receiver,receiverType,category,type,text)
+    fun sendMessage(): Flow<Resource<Messages>> = sendMessageUseCase(receiver , receiverType , category , type , text)
 
 //    fun getMessages(): Flow<Resource<List<Message>>> = messageUseCase("superhero1")
+
+     fun observeConnection() : Flow<Resource<WebSocket.Event>> = observeConnectionUseCase()
+
+    fun handleReceiveMessage(response : WebSocket.Event) : MessageScarlet?{
+       return handleReceiveMessageUseCase(response)
+    }
 
 
 }

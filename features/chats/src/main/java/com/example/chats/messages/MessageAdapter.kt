@@ -8,10 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chats.R
 import com.example.common.Constants.MESSAGE_TYPE_LEFT
 import com.example.common.Constants.MESSAGE_TYPE_RIGHT
-import com.example.model.Message
+import com.example.model.Messages
 
-class MessageAdapter(private val dataSet: List<Message> , private val onItemClicked: (Message) -> Unit) :
+class MessageAdapter(private val dataSet: MutableList<Messages> , private val onItemClicked: (Messages) -> Unit) :
     RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
+
+    private var messageSet = mutableListOf<Messages>()
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtUserName: TextView = view.findViewById(R.id.tvMessage)
@@ -29,19 +31,27 @@ class MessageAdapter(private val dataSet: List<Message> , private val onItemClic
         }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder , position: Int)
-    {
-        val current = dataSet[position]
-        holder.txtUserName.text = current.message
+    override fun onBindViewHolder(holder: ViewHolder , position: Int) {
+            val current = messageSet[position]
+            holder.txtUserName.text = current.message
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (dataSet[position].uid!! == "09121338526"){
+        return if (dataSet[position].isFromSender!!){
             MESSAGE_TYPE_RIGHT
         }else{
             MESSAGE_TYPE_LEFT
         }
     }
 
-    override fun getItemCount(): Int = dataSet.size
+    override fun getItemCount(): Int {
+        messageSet = dataSet
+        messageSet.removeIf { it.action!! }
+        return messageSet.size
+    }
+
+    fun addItem(item: Messages) {
+        messageSet.add(item)
+        notifyDataSetChanged()
+    }
 }

@@ -14,10 +14,13 @@ import com.example.chats.databinding.FragmentMessageBinding
 import com.example.chats.viewmodel.MessageViewModel
 import com.example.common.result.Resource
 import com.example.model.Conversations
+import com.example.model.Messages
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import com.tinder.scarlet.Message as MessageScarlet
 
 
 /**
@@ -51,6 +54,7 @@ class MessageFragment : Fragment() {
         val receiverDetail = safeArgs.conversation
         setUpRecyclerView()
         setUpReceiverDetails(receiverDetail)
+        getEvent()
 
         binding.sendMessage.setOnClickListener {
             sendMessage()
@@ -65,7 +69,7 @@ class MessageFragment : Fragment() {
                     is Resource.Loading -> {}
                     is Resource.Success -> {
                         result.data?.let { messages ->
-                            messageAdapter = MessageAdapter(messages){}
+                            messageAdapter = MessageAdapter(messages.toMutableList()){}
                             binding.messageRecyclerView.apply {
                                 layoutManager =  LinearLayoutManager(requireContext() , LinearLayoutManager.VERTICAL , false)
                                 scrollToPosition(messages.size-1)
@@ -95,11 +99,40 @@ class MessageFragment : Fragment() {
             messageViewModel.sendMessage().collect { result ->
                 when (result) {
                     is Resource.Loading -> {}
-                    is Resource.Success -> { Toast.makeText(requireContext(),"Message Sent", Toast.LENGTH_SHORT).show() }
+                    is Resource.Success -> {
+                        messageAdapter.addItem(Messages(result.data?.message , true, action = false))
+                    }
                     is Resource.Error -> {}
                 }
             }
-           setUpRecyclerView()
+        }
+    }
+
+    private fun handleOnMessageReceived(message: MessageScarlet) {
+        messageAdapter.addItem(Messages(message.toValue() , false , action = false))
+    }
+
+    private fun getEvent(){
+        lifecycleScope.launch {
+            val event = messageViewModel.observeConnection()
+            event.onEach { result ->
+                when(result){
+                    is Resource.Success -> {
+                        result.data?.let { event ->
+                            handleOnMessageReceived(messageViewModel.handleReceiveMessage(event)!!)
+                        }
+                    }
+                    else -> {}
+                }
+            }
+        }
+
+    }
+
+    private fun MessageScarlet.toValue(): String {
+        return when (this) {
+            is com.tinder.scarlet.Message.Text -> value
+            is com.tinder.scarlet.Message.Bytes -> value.toString()
         }
     }
 

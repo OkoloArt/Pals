@@ -16,6 +16,8 @@ data class MessageData(
 data class Data(
     @Json(name = "text")
     val text: String?,
+    @Json(name = "action")
+    val action: String?,
     @Json(name = "entities")
     val entities: Entities?,
 )

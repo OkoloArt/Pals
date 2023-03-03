@@ -2,14 +2,14 @@ package com.example.data.model
 
 import com.example.model.Conversations
 import com.example.model.Friends
-import com.example.model.Message
+import com.example.model.Messages
 import com.example.model.User
 import com.example.network.model.conversations.ConversationData
 import com.example.network.model.friends.FriendsData
 import com.example.network.model.messages.MessageData
-import com.example.network.model.messages.SendMessageData
 import com.example.network.model.messages.SendMessageResponse
 import com.example.network.model.user.UserResponse
+import com.tinder.scarlet.Message as MessageScarlet
 
 fun UserResponse.toCreateUser(): User {
     return User(
@@ -32,10 +32,11 @@ fun FriendsData.toFriends(): Friends {
     )
 }
 
-fun SendMessageResponse.toMessage() : Message{
-    return Message(
+fun SendMessageResponse.toMessage() : Messages{
+    return Messages(
             message = this.sendMessageData.data?.text,
-            uid = this.sendMessageData.id
+            isFromSender = null,
+            action = false
     )
 }
 
@@ -67,9 +68,28 @@ fun ConversationData.toConversations(): Conversations {
 //    }
 //}
 
-fun MessageData.toMessages() : Message{
-    return Message(
+fun MessageData.toMessages() : Messages{
+    return Messages(
             message = this.data?.text,
-            uid = this.sender
+            isFromSender = this.sender == "09121338526",
+            action = this.data?.action == "deleted"
     )
 }
+
+//fun MessageScarlet.toMessageText(): Message {
+//    return when (this) {
+//        is com.tinder.scarlet.Message.Text -> Message(value,"")
+//        is com.tinder.scarlet.Message.Bytes -> Message(value.toString(),"")
+//    }
+//}
+
+//fun MessageScarlet.toValue(): Messages {
+//    return when (this){
+//        is com.tinder.scarlet.Message.Text -> {
+//            Messages(value , )
+//        }
+//        is com.tinder.scarlet.Message.Bytes -> {
+//            Messages(value.toString() , "")
+//        }
+//    }
+//}
