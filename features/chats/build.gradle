@@ -61,5 +61,13 @@ dependencies {
     kapt "com.google.dagger:hilt-compiler:2.44"
     kapt "androidx.hilt:hilt-compiler:1.0.0"
 
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.21'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
+
     implementation 'com.tinder.scarlet:scarlet:0.1.12'
+    implementation "com.tinder.scarlet:websocket-okhttp:0.1.12"
+    implementation "com.tinder.scarlet:stream-adapter-rxjava2:0.1.12"
+    implementation "com.tinder.scarlet:message-adapter-moshi:0.1.12"
+    implementation "com.tinder.scarlet:lifecycle-android:0.1.12"
 }

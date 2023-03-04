@@ -7,6 +7,6 @@ object Constants {
     const val API_KEY = "84cfdf4d3c244e49b64a8d29278f19a824ca7a17"
     const val MESSAGE_TYPE_LEFT = 0
     const val MESSAGE_TYPE_RIGHT =1
-    const val ECHO_URL = "wss://$APP_ID.api-$REGION.cometchat.io/v3/messages"
+    const val ECHO_URL = "wss://$APP_ID.api-$REGION.cometchat.io/v3/superhero1/messages"
 
 }
