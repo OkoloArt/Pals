@@ -1,6 +1,5 @@
 package com.example.data.repository.message_repository
 
-import android.util.Log
 import com.example.common.result.Resource
 import com.example.data.model.toMessage
 import com.example.data.model.toMessages
@@ -9,7 +8,6 @@ import com.example.network.model.messages.MessageDataObject
 import com.example.network.retrofit.HelloWorldApi
 import com.example.network.retrofit.SocketService
 import com.google.gson.Gson
-import io.reactivex.android.schedulers.AndroidSchedulers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
@@ -26,8 +24,8 @@ class MessageRepositoryImpl @Inject constructor(private val helloWorldApi: Hello
     override fun getMessages(uid: String): Flow<Resource<List<Messages>>> = flow {
         try {
             emit(Resource.Loading())
-            val messages = helloWorldApi.getMessages(uid).messageData!!.map { it.toMessages() }
-            emit(Resource.Success(messages))
+            val message = helloWorldApi.getMessages(uid).messageData!!.map { it.toMessages() }
+            emit(Resource.Success(message))
 
         }catch (e: HttpException) {
             emit(Resource.Error( "An unexpected Error Occurred kindly check your login detail"))
@@ -65,4 +63,27 @@ class MessageRepositoryImpl @Inject constructor(private val helloWorldApi: Hello
         }
     }
 
+    override fun observeTicker(): Flow<Resource<Messages>> = flow {
+        try {
+            socketService.observeTicker()
+                .subscribe { messages ->
+                    runBlocking {
+                        emit(Resource.Success(Messages(messages.text)))
+                    }
+                }
+        }catch (e: HttpException) {
+            emit( Resource.Error(""))
+        }
+    }
+
+    override fun observeConnection(uid: String) {
+       runBlocking{
+            socketService.observeConnection()
+                .subscribe {
+                    runBlocking {
+                        val messages = helloWorldApi.getMessages(uid)
+                        socketService.subscribe(messages) }
+                }
+        }
+    }
 }

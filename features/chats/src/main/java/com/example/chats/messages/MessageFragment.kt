@@ -1,15 +1,15 @@
 package com.example.chats.messages
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chats.databinding.FragmentMessageBinding
@@ -17,12 +17,11 @@ import com.example.chats.viewmodel.MessageViewModel
 import com.example.common.result.Resource
 import com.example.model.Conversations
 import com.example.model.Messages
-import com.example.network.model.messages.MessageDataObject
 import com.example.network.retrofit.SocketService
 import com.squareup.picasso.Picasso
-import com.tinder.scarlet.WebSocket
 import com.tinder.scarlet.WebSocket.Event.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -62,10 +61,12 @@ class MessageFragment : Fragment() {
         val receiverDetail = safeArgs.conversation
         setUpRecyclerView()
         setUpReceiverDetails(receiverDetail)
+        observeConnection()
 
         binding.sendMessage.setOnClickListener {
-            sendMessage()
+            handleOnMessageReceived()
         }
+
     }
 
     private fun setUpRecyclerView(){
@@ -80,10 +81,12 @@ class MessageFragment : Fragment() {
                             messageAdapter = MessageAdapter(messages.toMutableList()){}
                             binding.messageRecyclerView.apply {
                                 layoutManager =  LinearLayoutManager(requireContext() , LinearLayoutManager.VERTICAL , false)
-                                scrollToPosition(messages.size-1)
+                                smoothScrollToPosition(messages.size-1)
                                 setHasFixedSize(true)
                                 adapter = messageAdapter
                             }
+
+
                         }
                     }
                     is Resource.Error ->{}
@@ -100,47 +103,38 @@ class MessageFragment : Fragment() {
         }
     }
 
-//    private fun sendMessage(){
-//        val message = binding.messageEdittext.editText?.text.toString()
-//        lifecycleScope.launch{
-//            messageViewModel.setValue("superhero1","user","message","text",message)
-//            messageViewModel.sendMessage().collect { result ->
-//                when (result) {
-//                    is Resource.Loading -> {}
-//                    is Resource.Success -> {
-//                        messageAdapter.addItem(Messages(result.data?.message , true, action = false))
-//                    }
-//                    is Resource.Error -> {}
-//                }
-//            }
-//        }
-//    }
-
     private fun sendMessage(){
-        observeConnection()
-        Toast.makeText(requireContext() ," response.toString()" , Toast.LENGTH_SHORT).show()
-
-    }
-
-    @SuppressLint("CheckResult")
-    private fun observeConnection() {
         val message = binding.messageEdittext.editText?.text.toString()
-        socketService.observeConnection()
-            .filter { it is OnConnectionOpened<*> }
-            .subscribe { response ->
-              //  socketService.subscribe(MessageDataObject(message))
-                Toast.makeText(requireContext() , response.toString() , Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch{
+            messageViewModel.setValue("superhero1","user","message","text",message)
+            messageViewModel.sendMessage().collect { result ->
+                when (result) {
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
+                        messageAdapter.addItem(Messages(result.data?.message , true, action = false))
+                    }
+                    is Resource.Error -> {}
+                }
             }
+        }
     }
 
-//    private fun handleOnMessageReceived() {
-//        // news data result
-//        runBlocking {
-//          socketService.observeTicker()
-//               .subscribe { ticker ->
-//                   messageAdapter.addItem(Messages(ticker.message, true, action = false))
-//               }
-//        }
-//
-//    }
+    private fun handleOnMessageReceived() {
+        lifecycleScope.launch {
+            messageViewModel.observeTicker().collect{ result ->
+                result.data?.let { message ->
+                    Toast.makeText(requireContext(), message.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    private fun observeConnection() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                messageViewModel.observeConnection()
+            }
+        }
+    }
+
 }

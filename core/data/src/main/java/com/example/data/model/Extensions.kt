@@ -75,21 +75,3 @@ fun MessageData.toMessages() : Messages{
             action = this.data?.action == "deleted"
     )
 }
-
-//fun MessageScarlet.toMessageText(): Message {
-//    return when (this) {
-//        is com.tinder.scarlet.Message.Text -> Message(value,"")
-//        is com.tinder.scarlet.Message.Bytes -> Message(value.toString(),"")
-//    }
-//}
-
-//fun MessageScarlet.toValue(): Messages {
-//    return when (this){
-//        is com.tinder.scarlet.Message.Text -> {
-//            Messages(value , )
-//        }
-//        is com.tinder.scarlet.Message.Bytes -> {
-//            Messages(value.toString() , "")
-//        }
-//    }
-//}

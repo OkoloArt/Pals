@@ -3,6 +3,8 @@ package com.example.network.di
 import android.app.Application
 import com.example.common.Constants.ECHO_URL
 import com.example.network.retrofit.SocketService
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import com.tinder.scarlet.Lifecycle
 import com.tinder.scarlet.MessageAdapter
 import com.tinder.scarlet.Scarlet
@@ -26,23 +28,22 @@ object WebSocketModule {
 
     private val backoffStrategy = ExponentialWithJitterBackoffStrategy(5000 , 5000)
 
-//    @Singleton
-//    @Provides
-//    fun provideWebSocketService(scarlet: Scarlet): SocketService {
-//        return scarlet.create(SocketService::class.java)
-//    }
+    @Singleton
+    @Provides
+    fun provideWebSocketService(scarlet: Scarlet): SocketService {
+        return scarlet.create(SocketService::class.java)
+    }
 
     @Singleton
     @Provides
-    fun provideScarlet(client: OkHttpClient , lifecycle: Lifecycle , streamAdapterFactory: StreamAdapter.Factory): SocketService {
+    fun provideScarlet(client: OkHttpClient , lifecycle: Lifecycle , streamAdapterFactory: StreamAdapter.Factory, messageAdapter: MessageAdapter.Factory): Scarlet {
         return Scarlet.Builder()
             .webSocketFactory(client.newWebSocketFactory(ECHO_URL))
-            .addMessageAdapterFactory(MoshiMessageAdapter.Factory())
-            .addStreamAdapterFactory(RxJava2StreamAdapterFactory())
-            .backoffStrategy(backoffStrategy)
+            .addMessageAdapterFactory(messageAdapter)
             .lifecycle(lifecycle)
+            .backoffStrategy(backoffStrategy)
+            .addStreamAdapterFactory(streamAdapterFactory)
             .build()
-            .create()
     }
 
     @Singleton
@@ -55,5 +56,9 @@ object WebSocketModule {
 
     @Singleton
     @Provides
-    fun provideMoshiMessageAdapter(): MessageAdapter.Factory = MoshiMessageAdapter.Factory()
+    fun provideMoshiMessageAdapter(moshi: Moshi): MessageAdapter.Factory = MoshiMessageAdapter.Factory(moshi)
+
+    @Singleton
+    @Provides
+    fun provideMoshi(): Moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 }

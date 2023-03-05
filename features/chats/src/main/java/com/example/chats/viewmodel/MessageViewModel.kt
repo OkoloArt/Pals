@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.common.result.Resource
 import com.example.domain.use_case.message_use_case.MessageUseCase
+import com.example.domain.use_case.message_use_case.ObserveConnectionUseCase
+import com.example.domain.use_case.message_use_case.ObserveTickerUseCase
 import com.example.domain.use_case.message_use_case.SendMessageUseCase
 import com.example.model.Messages
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +20,8 @@ import javax.inject.Inject
 class MessageViewModel @Inject constructor(
     private val messageUseCase: MessageUseCase ,
     private val sendMessageUseCase: SendMessageUseCase,
+    private val observeTickerUseCase: ObserveTickerUseCase,
+    private val observeConnectionUseCase: ObserveConnectionUseCase
 ) : ViewModel()
 {
 
@@ -82,5 +86,9 @@ class MessageViewModel @Inject constructor(
     fun sendMessage(): Flow<Resource<Messages>> = sendMessageUseCase(receiver , receiverType , category , type , text)
 
 //    fun getMessages(): Flow<Resource<List<Message>>> = messageUseCase("superhero1")
+
+    fun observeTicker(): Flow<Resource<Messages>>  = observeTickerUseCase()
+
+    fun observeConnection() = observeConnectionUseCase("superhero1")
 
 }
