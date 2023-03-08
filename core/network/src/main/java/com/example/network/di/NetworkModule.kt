@@ -1,6 +1,8 @@
 package com.example.network.di
 
 import com.example.common.Constants
+import com.example.common.Constants.ECHO_URL
+import com.example.network.retrofit.CometClient
 import com.example.network.retrofit.HelloWorldApi
 import com.example.network.retrofit.MyInterceptor
 import com.squareup.moshi.Moshi
@@ -9,7 +11,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.ktor.client.*
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -44,4 +48,14 @@ object NetworkModule {
             .create(HelloWorldApi::class.java)
     }
 
+    @Singleton
+    @Provides
+    fun providesRequest() : Request{
+        return Request.Builder()
+            .url(ECHO_URL)
+            .build()
+    }
+
+    @Provides
+    fun getHttpClient(httpClient: CometClient): HttpClient = httpClient.getHttpClient()
 }

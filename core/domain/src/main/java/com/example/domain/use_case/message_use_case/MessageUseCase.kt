@@ -17,9 +17,7 @@ class ObserveConnectionUseCase @Inject constructor(private val messageRepository
 }
 
 class ObserveTickerUseCase @Inject constructor(private val messageRepository: MessageRepository) {
-    operator fun invoke() : Flow<Resource<Messages>> {
-        return messageRepository.observeTicker()
-    }
+    operator fun invoke() : Flow<Resource<String>> = messageRepository.observeTicker()
 }
 
 class SendMessageUseCase  @Inject constructor(private val messageRepository: MessageRepository) {

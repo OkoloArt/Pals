@@ -19,8 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MessageViewModel @Inject constructor(
     private val messageUseCase: MessageUseCase ,
-    private val sendMessageUseCase: SendMessageUseCase,
-    private val observeTickerUseCase: ObserveTickerUseCase,
+    private val sendMessageUseCase: SendMessageUseCase ,
+    private val observeTickerUseCase: ObserveTickerUseCase ,
     private val observeConnectionUseCase: ObserveConnectionUseCase
 ) : ViewModel()
 {
@@ -73,21 +73,11 @@ class MessageViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-//    fun sendMessage(receiver: String , receiverType: String , category: String , type: String , text: String , ) {
-//        sendMessageUseCase(receiver , receiverType , category , type , text).onEach { result ->
-//            when (result) {
-//                is Resource.Loading -> {}
-//                is Resource.Success -> { _message.value = result }
-//                is Resource.Error -> {}
-//            }
-//        }.launchIn(viewModelScope)
-//    }
-
     fun sendMessage(): Flow<Resource<Messages>> = sendMessageUseCase(receiver , receiverType , category , type , text)
 
 //    fun getMessages(): Flow<Resource<List<Message>>> = messageUseCase("superhero1")
 
-    fun observeTicker(): Flow<Resource<Messages>>  = observeTickerUseCase()
+    fun observeTicker(): Flow<Resource<String>>  = observeTickerUseCase()
 
     fun observeConnection() = observeConnectionUseCase("superhero1")
 

@@ -13,10 +13,9 @@ interface SocketService {
     fun observeConnection(): Flowable<WebSocket.Event>
 
     @Send
-    fun subscribe(action: MessageResponse)
+    fun subscribe(action: MessageData)
 
     @Receive
     fun observeTicker(): Flowable<Data>
 
 }
-

@@ -1,13 +1,17 @@
 package com.example.data.repository.message_repository
 
+import com.example.common.Constants.ECHO_URL
 import com.example.common.result.Resource
 import com.example.data.model.toMessage
 import com.example.data.model.toMessages
 import com.example.model.Messages
 import com.example.network.model.messages.MessageDataObject
+import com.example.network.model.messages.MessageResponse
 import com.example.network.retrofit.HelloWorldApi
 import com.example.network.retrofit.SocketService
 import com.google.gson.Gson
+import io.ktor.client.*
+import io.ktor.client.request.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
@@ -19,7 +23,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 
-class MessageRepositoryImpl @Inject constructor(private val helloWorldApi: HelloWorldApi, private val socketService: SocketService) : MessageRepository {
+class MessageRepositoryImpl @Inject constructor(private val helloWorldApi: HelloWorldApi, private val httpClient: HttpClient,  private val socketService: SocketService) : MessageRepository {
 
     override fun getMessages(uid: String): Flow<Resource<List<Messages>>> = flow {
         try {
@@ -63,12 +67,27 @@ class MessageRepositoryImpl @Inject constructor(private val helloWorldApi: Hello
         }
     }
 
-    override fun observeTicker(): Flow<Resource<Messages>> = flow {
+    override fun getMessage(uid: String): Flow<Resource<List<Messages>>> = flow {
+        try {
+            emit(Resource.Loading())
+            val message =  httpClient.get<MessageResponse> {
+                url(ECHO_URL)
+            }.messageData!!.map { it.toMessages() }
+            emit(Resource.Success(message))
+
+        }catch (e: HttpException) {
+            emit(Resource.Error( "An unexpected Error Occurred kindly check your login detail"))
+        } catch (e: IOException) {
+            emit(Resource.Error(message = "Couldn't reach server please check your internet connection"))
+        }
+    }
+
+    override fun observeTicker(): Flow<Resource<String>> = flow {
         try {
             socketService.observeTicker()
                 .subscribe { messages ->
                     runBlocking {
-                        emit(Resource.Success(Messages(messages.text)))
+                        emit(Resource.Success(messages?.text!!))
                     }
                 }
         }catch (e: HttpException) {
@@ -77,11 +96,11 @@ class MessageRepositoryImpl @Inject constructor(private val helloWorldApi: Hello
     }
 
     override fun observeConnection(uid: String) {
-       runBlocking{
+        runBlocking{
             socketService.observeConnection()
                 .subscribe {
                     runBlocking {
-                        val messages = helloWorldApi.getMessages(uid)
+                        val messages = helloWorldApi.getMessages(uid).messageData?.last()!!
                         socketService.subscribe(messages) }
                 }
         }

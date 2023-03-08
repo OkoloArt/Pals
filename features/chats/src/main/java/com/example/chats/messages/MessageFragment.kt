@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.google.gson.Gson
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -15,15 +16,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chats.databinding.FragmentMessageBinding
 import com.example.chats.viewmodel.MessageViewModel
 import com.example.common.result.Resource
+import com.example.data.model.toMessages
 import com.example.model.Conversations
 import com.example.model.Messages
-import com.example.network.retrofit.SocketService
+import com.example.network.model.messages.MessageResponse
+import com.squareup.moshi.Moshi
 import com.squareup.picasso.Picasso
-import com.tinder.scarlet.WebSocket.Event.*
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import okhttp3.*
 import javax.inject.Inject
 
 
@@ -40,8 +41,6 @@ class MessageFragment : Fragment() {
 
     private lateinit var messageAdapter: MessageAdapter
     private val messageViewModel : MessageViewModel by viewModels()
-    @Inject
-    lateinit var socketService : SocketService
     private  var message = mutableListOf<Messages>()
 
     private val safeArgs: MessageFragmentArgs by navArgs()
@@ -123,7 +122,7 @@ class MessageFragment : Fragment() {
         lifecycleScope.launch {
             messageViewModel.observeTicker().collect{ result ->
                 result.data?.let { message ->
-                    Toast.makeText(requireContext(), message.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
                 }
             }
         }

@@ -30,13 +30,14 @@ object WebSocketModule {
 
     @Singleton
     @Provides
-    fun provideWebSocketService(scarlet: Scarlet): SocketService {
+    fun provideWebSocketService(scarlet: Scarlet): SocketService
+    {
         return scarlet.create(SocketService::class.java)
     }
 
     @Singleton
     @Provides
-    fun provideScarlet(client: OkHttpClient , lifecycle: Lifecycle , streamAdapterFactory: StreamAdapter.Factory, messageAdapter: MessageAdapter.Factory): Scarlet {
+    fun provideScarlet(client: OkHttpClient , lifecycle: Lifecycle , streamAdapterFactory: StreamAdapter.Factory , messageAdapter: MessageAdapter.Factory): Scarlet {
         return Scarlet.Builder()
             .webSocketFactory(client.newWebSocketFactory(ECHO_URL))
             .addMessageAdapterFactory(messageAdapter)

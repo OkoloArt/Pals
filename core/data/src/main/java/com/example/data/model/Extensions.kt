@@ -9,7 +9,6 @@ import com.example.network.model.friends.FriendsData
 import com.example.network.model.messages.MessageData
 import com.example.network.model.messages.SendMessageResponse
 import com.example.network.model.user.UserResponse
-import com.tinder.scarlet.Message as MessageScarlet
 
 fun UserResponse.toCreateUser(): User {
     return User(

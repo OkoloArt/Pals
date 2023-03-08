@@ -41,4 +41,5 @@ interface HelloWorldApi {
         @Part type: MultipartBody.Part ,
         @Part dataObject: MultipartBody.Part
     ): SendMessageResponse
+
 }
