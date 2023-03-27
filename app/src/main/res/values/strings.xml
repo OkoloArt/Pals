@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">PingPals</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="recent_chats">Recent Chats</string>
+    <string name="add_chat">Add Chat</string>
+    <string name="greeting">Good morning</string>
+    <string name="send_message">send_message</string>
+    <string name="hint_message">Type a message</string>
 </resources>

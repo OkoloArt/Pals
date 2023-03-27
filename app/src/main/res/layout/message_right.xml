@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="message"
+            type="com.example.helloworld.data.model.Message" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:paddingTop="10dp">
+
+        <TextView
+            android:id="@+id/sender_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/item_right_side_background"
+            android:padding="5dp"
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp"
+            android:text="@{message.message}" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:src="@drawable/ic_person"
+            android:id="@+id/userImage"
+            android:layout_width="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="2dp" />
+
+    </LinearLayout>
+</layout>

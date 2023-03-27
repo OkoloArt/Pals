@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="10dp"
+    android:background="@drawable/green_tone"
+    tools:context=".ui.fragments.ChatFragment">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/userImage"
+        android:layout_width="35dp"
+        android:layout_height="40dp"
+        android:layout_alignTop="@id/greet"
+        android:layout_alignBottom="@id/greet"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/husky"
+        app:civ_border_color="@color/colorPrimary"
+        app:civ_border_width="1dp" />
+
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/search_list"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_toStartOf="@id/userImage"
+        android:layout_toEndOf="@id/greet"
+        android:layout_width="match_parent"
+        android:layoutDirection="rtl"
+        app:queryHint="search chat"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/greet"
+        android:layout_marginStart="10dp"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:textSize="15sp"
+            android:text="@string/greeting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:fontFamily="sans-serif-smallcaps"
+            android:text=""
+            android:textStyle="bold"
+            android:id="@+id/username"
+            android:textSize="25sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/status_recyclerview"
+        android:layout_marginStart="10dp"
+        android:layout_below="@id/greet"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/status_item_layout"
+        android:layout_height="wrap_content"/>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_marginTop="12dp"
+        style="@style/CustomCardViewStyle"
+        android:layout_below="@id/status_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_marginTop="15dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/recent"
+                android:textSize="18sp"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-smallcaps"
+                android:text="@string/recent_chats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:id="@+id/empty_list_text"
+                android:layout_centerInParent="true"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:layout_marginEnd="20dp"
+                android:layout_marginStart="20dp"
+                android:text="You have no recent chat, why not click on the add chat button to get started"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_marginTop="10dp"
+             android:layout_below="@id/recent"
+                android:id="@+id/chat_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/add_message"
+        android:layout_width="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:text="@string/add_chat"
+        android:layout_height="wrap_content"
+        app:icon="@drawable/ic_add"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:contentDescription="@string/add_chat" />
+
+</RelativeLayout>

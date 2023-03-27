@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#e8eae6"
+    android:orientation="vertical"
+    tools:context=".ui.fragments.ContactInfoFragment">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/contact_image"
+        app:civ_border_width="1dp"
+        android:layout_width="200dp"
+        android:layout_marginTop="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_height="200dp"
+        android:src="@drawable/husky" />
+
+    <TextView
+       android:layout_centerHorizontal="true"
+        android:id="@+id/contact_name"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        android:textSize="20sp"
+        android:layout_below="@id/contact_image"
+        android:fontFamily="sans-serif-smallcaps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Contact Name" />
+
+    <LinearLayout
+        android:gravity="center"
+        android:layout_below="@id/contact_name"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-thin"
+            android:layout_marginEnd="20dp"
+            android:textSize="16sp"
+            android:padding="3dp"
+            android:drawablePadding="3dp"
+            android:layout_height="wrap_content"
+            android:text="Message"
+            app:drawableTopCompat="@drawable/ic_chat" />
+
+        <TextView
+            android:id="@+id/audio_Call"
+            android:layout_width="wrap_content"
+            android:textStyle="bold"
+            android:padding="3dp"
+            android:textSize="16sp"
+            android:drawablePadding="3dp"
+            android:fontFamily="sans-serif-thin"
+            android:layout_marginEnd="20dp"
+            android:layout_height="wrap_content"
+            android:text="Audio"
+            app:drawableTopCompat="@drawable/ic_call" />
+
+        <TextView
+            android:id="@+id/video_call"
+            android:padding="3dp"
+            android:fontFamily="sans-serif-thin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:drawablePadding="3dp"
+            android:textStyle="bold"
+            android:text="Video"
+            app:drawableTopCompat="@drawable/ic_videocam" />
+
+    </LinearLayout>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        style="@style/CustomCardViewStyle">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/expand_collaspe"
+                android:src="@drawable/ic_arrow_up"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"/>
+
+            <LinearLayout
+                android:id="@+id/expandable_view"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_gravity="center"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_person"/>
+
+                    <LinearLayout
+                        android:layout_marginStart="20dp"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Username"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+
+                        <TextView
+                            android:textSize="15sp"
+                            android:id="@+id/contact_username"
+                            android:text="Phone Number"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_gravity="center"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_call"/>
+
+                    <LinearLayout
+                        android:layout_marginStart="20dp"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Phone Number"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+
+                        <TextView
+                            android:textSize="15sp"
+                            android:id="@+id/contact_phone_number"
+                            android:text="Phone Number"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_gravity="center"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_email"/>
+
+                    <LinearLayout
+                        android:layout_marginStart="20dp"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Email"
+                            android:textSize="17sp"
+                            android:textStyle="bold"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+
+                        <TextView
+                            android:textSize="15sp"
+                            android:id="@+id/contact_email"
+                            android:text="Phone Number"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</RelativeLayout>

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1066930205282",
+    "firebase_url": "https://pingpals-309f6-default-rtdb.firebaseio.com",
+    "project_id": "pingpals-309f6",
+    "storage_bucket": "pingpals-309f6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1066930205282:android:8be5c5df392f6c0b5cd73b",
+        "android_client_info": {
+          "package_name": "com.example.helloworld"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1066930205282-6ipmd1e3kp38lfr4bclq7cdtpu4bucbf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.helloworld",
+            "certificate_hash": "eb58c2ad62a329d810a0e23d726b8646c29600f5"
+          }
+        },
+        {
+          "client_id": "1066930205282-ja9q0j52ujo3nlkehaq8jdh03o0v5rkf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYenfDMJ6oFkZk29kliG6pxHb-dzmk7m0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1066930205282-ja9q0j52ujo3nlkehaq8jdh03o0v5rkf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
