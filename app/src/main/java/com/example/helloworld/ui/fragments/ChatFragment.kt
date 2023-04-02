@@ -71,7 +71,10 @@ class ChatFragment : Fragment() {
     }
 
     private fun setUpStatusRecyclerview() {
-        statusAdapter = StatusAdapter()
+        statusAdapter = StatusAdapter(){
+            val action = ChatFragmentDirections.actionChatFragmentToStatusFragment()
+            findNavController().navigate(action)
+        }
         binding.statusRecyclerview.apply {
             layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.HORIZONTAL,false)
             setHasFixedSize(true)

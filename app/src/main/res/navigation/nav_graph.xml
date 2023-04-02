@@ -45,6 +45,9 @@
         <action
             android:id="@+id/action_chatFragment_to_messageFragment"
             app:destination="@id/messageFragment" />
+        <action
+            android:id="@+id/action_chatFragment_to_statusFragment"
+            app:destination="@id/statusFragment" />
     </fragment>
     <fragment
         android:id="@+id/contactsFragment"
@@ -81,4 +84,9 @@
             android:id="@+id/action_messageFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/statusFragment"
+        android:name="com.example.helloworld.ui.fragments.StatusFragment"
+        android:label="fragment_status"
+        tools:layout="@layout/fragment_status" />
 </navigation>

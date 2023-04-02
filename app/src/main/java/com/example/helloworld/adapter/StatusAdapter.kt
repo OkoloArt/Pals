@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.helloworld.databinding.StatusItemLayoutBinding
 
-class StatusAdapter():RecyclerView.Adapter<StatusAdapter.StatusViewHolder>(){
+class StatusAdapter(private val onItemClicked : (String) -> Unit):RecyclerView.Adapter<StatusAdapter.StatusViewHolder>(){
 
     class StatusViewHolder(private val bindStatusItemLayoutBinding: StatusItemLayoutBinding): RecyclerView.ViewHolder(bindStatusItemLayoutBinding.root) {
 
@@ -17,6 +17,9 @@ class StatusAdapter():RecyclerView.Adapter<StatusAdapter.StatusViewHolder>(){
     }
 
     override fun onBindViewHolder(holder: StatusViewHolder , position: Int) {
+        holder.itemView.setOnClickListener {
+            onItemClicked("")
+        }
     }
 
     override fun getItemCount(): Int = 10

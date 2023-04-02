@@ -78,4 +78,7 @@ dependencies {
 
     // Runtime Permissions
     implementation 'com.karumi:dexter:6.2.3'
+
+    // Image Loading
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }
