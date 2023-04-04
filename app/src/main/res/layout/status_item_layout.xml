@@ -16,6 +16,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:id="@+id/username"
         android:layout_below="@id/status"
         android:layout_marginTop="5dp"
         android:text="Collins"

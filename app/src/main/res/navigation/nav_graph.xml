@@ -88,5 +88,16 @@
         android:id="@+id/statusFragment"
         android:name="com.example.helloworld.ui.fragments.StatusFragment"
         android:label="fragment_status"
-        tools:layout="@layout/fragment_status" />
+        tools:layout="@layout/fragment_status" >
+        <action
+            android:id="@+id/action_statusFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+        <argument
+            android:name="itemPosition"
+            app:argType="integer" />
+        <argument
+            android:name="status"
+            app:argType="com.example.helloworld.data.model.UserStatus[]" />
+
+    </fragment>
 </navigation>

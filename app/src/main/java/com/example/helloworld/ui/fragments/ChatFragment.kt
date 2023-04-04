@@ -16,7 +16,9 @@ import com.example.helloworld.common.Constants.USERS
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
 import com.example.helloworld.data.model.ChatList
+import com.example.helloworld.data.model.ImageStatus
 import com.example.helloworld.data.model.User
+import com.example.helloworld.data.model.UserStatus
 import com.example.helloworld.databinding.FragmentChatBinding
 import com.example.helloworld.ui.viewmodel.ChatViewModel
 import com.example.helloworld.ui.viewmodel.ProfileViewModel
@@ -71,8 +73,8 @@ class ChatFragment : Fragment() {
     }
 
     private fun setUpStatusRecyclerview() {
-        statusAdapter = StatusAdapter(){
-            val action = ChatFragmentDirections.actionChatFragmentToStatusFragment()
+        statusAdapter = StatusAdapter(getUsers()) { num ->
+            val action = ChatFragmentDirections.actionChatFragmentToStatusFragment(num , getUsers().toTypedArray())
             findNavController().navigate(action)
         }
         binding.statusRecyclerview.apply {
@@ -133,5 +135,31 @@ class ChatFragment : Fragment() {
                 findNavController().navigate(action)
             }
         }
+    }
+
+    private fun getUsers(): List<UserStatus> {
+        // Replace this with your own code to retrieve the list of users
+        val user1 = UserStatus(
+                "Alice" , listOf(
+                ImageStatus("https://images.unsplash.com/photo-1563889362352-b0492c224f62?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" , "2022-01-01") ,
+                ImageStatus("https://images.unsplash.com/photo-1547407139-3c921a66005c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" , "2022-01-02")
+        )
+        )
+
+        val user2 = UserStatus(
+                "Bob" , listOf(
+                ImageStatus("https://images.unsplash.com/photo-1616567214738-22fc0c6332b3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" , "2022-01-01") ,
+                ImageStatus("https://images.unsplash.com/flagged/photo-1550973078-10a2d124c99c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=685&q=80" , "2022-01-02")
+        )
+        )
+
+        val user3 = UserStatus(
+                "Death" , listOf(
+                ImageStatus("https://images.unsplash.com/photo-1561297108-a47d55d96a19?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" , "2022-01-01") ,
+                ImageStatus("https://images.unsplash.com/photo-1580825328373-ee07fad4b195?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" , "2022-01-02")
+        )
+        )
+
+        return listOf(user1 , user2, user3)
     }
 }

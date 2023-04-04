@@ -5,6 +5,8 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:textStyle="bold"
+        android:textSize="20sp"
         android:id="@+id/status_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
