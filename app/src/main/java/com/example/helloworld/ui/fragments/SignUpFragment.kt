@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.helloworld.common.datastore.UserPreferences
+import com.example.helloworld.data.model.ImageStatus
 import com.example.helloworld.data.model.User
 import com.example.helloworld.databinding.FragmentSignUpBinding
 import com.example.helloworld.ui.viewmodel.UserViewModel
@@ -76,11 +77,12 @@ class SignUpFragment : Fragment()
     }
 
     private fun uploadData(email:String, username: String){
-        val user = User("", email,username,"","")
-//        val map = mapOf(
-//                "email" to user.email!!,
-//                "username" to user.username!!
-//        )
+
+        val imageStatus = mutableListOf(
+                ImageStatus("https://images.unsplash.com/photo-1563889362352-b0492c224f62?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" , "2022-01-01") ,
+                ImageStatus("https://images.unsplash.com/photo-1547407139-3c921a66005c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" , "2022-01-02")
+        )
+        val user = User("" , email , username , "" , "online" , false , imageStatus,"","","")
         userViewModel.uploadData(user)
     }
 

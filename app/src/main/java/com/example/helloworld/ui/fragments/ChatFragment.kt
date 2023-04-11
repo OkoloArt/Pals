@@ -43,7 +43,6 @@ class ChatFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        updateOnlineStatus("online")
     }
 
     override fun onCreateView(
@@ -85,7 +84,6 @@ class ChatFragment : Fragment() {
     }
 
     private fun readChat(){
-
         val dbChats = firebaseDatabase.child(CHAT_LIST).child(getUID()!!)
         val options = FirebaseRecyclerOptions.Builder<ChatList>()
             .setLifecycleOwner(this)
@@ -100,8 +98,8 @@ class ChatFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             setHasFixedSize(true)
             adapter = chatAdapter
+            itemAnimator = null
         }
-
     }
 
     private fun getUID(): String? {
@@ -113,6 +111,7 @@ class ChatFragment : Fragment() {
         if (this::chatAdapter.isInitialized){
             chatAdapter.startListening()
         }
+        updateOnlineStatus("online")
     }
 
     override fun onPause() {
@@ -120,10 +119,12 @@ class ChatFragment : Fragment() {
         if (this::chatAdapter.isInitialized){
             chatAdapter.stopListening()
         }
+        updateOnlineStatus("offline")
     }
 
     private fun updateOnlineStatus(status: String) {
-        val databaseReference = firebaseDatabase.child(USERS).child(firebaseAuth.uid!!).child("onlineStatus")
+        val databaseReference = firebaseDatabase.child(USERS).child(
+                firebaseAuth.uid!!).child("online")
         databaseReference.setValue(status)
     }
 

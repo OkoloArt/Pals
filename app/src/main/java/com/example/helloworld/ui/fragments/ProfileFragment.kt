@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.helloworld.data.model.ImageStatus
 import com.example.helloworld.data.model.User
 import com.example.helloworld.databinding.FragmentProfileBinding
 import com.example.helloworld.ui.viewmodel.ProfileViewModel
@@ -50,7 +51,9 @@ class ProfileFragment : Fragment() {
 
     private fun showDialog(user: User){
 
-        user.username = "Mugen Death"
+        val newItem = ImageStatus("https://images.unsplash.com/photo-1629246999700-1e7ad7a1ba03?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1612&q=80" , "2023-04-10")
+        user.imageStatus?.add(newItem)
+        user.username = "Death"
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Update")
             .setMessage("Do you want to update profile")

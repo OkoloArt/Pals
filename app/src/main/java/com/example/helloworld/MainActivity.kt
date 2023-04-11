@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import com.example.helloworld.common.Constants
+import com.example.helloworld.common.utils.FirebaseUtils
 import com.example.helloworld.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -71,9 +73,20 @@ class MainActivity : AppCompatActivity()
 
     }
 
-    override fun onStart() {
-        super.onStart()
-      // updateOnlineStatus("Online")
-    }
+//    override fun onResume() {
+//        super.onResume()
+//        updateOnlineStatus("online")
+//    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//        updateOnlineStatus("offline")
+//    }
+//
+//    private fun updateOnlineStatus(status: String) {
+//        val databaseReference = FirebaseUtils.firebaseDatabase.child(Constants.USERS).child(
+//                FirebaseUtils.firebaseAuth.uid!!).child("online")
+//        databaseReference.setValue(status)
+//    }
 
 }

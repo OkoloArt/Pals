@@ -22,7 +22,7 @@ class MessageRepositoryImpl @Inject constructor() : MessageRepository {
 
     override fun checkChat(receiverId: String , callback: (String) -> Unit) {
         val databaseReference = dbChatList.child(userUid)
-        var chatId : String? = null
+        var chatId: String?
         val query = databaseReference.orderByChild("member").equalTo(receiverId)
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -45,18 +45,18 @@ class MessageRepositoryImpl @Inject constructor() : MessageRepository {
     }
 
     override fun createChat(lastMessage: String, receiverId: String){
-        var chatId : String? = null
+        val chatId: String?
         var databaseReference = dbChatList.child(userUid)
         chatId = databaseReference.push().key
 
         val chatListMode = ChatList(chatId!! , lastMessage , System.currentTimeMillis().toString() , receiverId)
-        databaseReference.child(chatId!!).setValue(chatListMode)
+        databaseReference.child(chatId).setValue(chatListMode)
 
         databaseReference = dbChatList.child(receiverId)
-        val chatList = ChatList(chatId!! , lastMessage , System.currentTimeMillis().toString() , userUid)
-        databaseReference.child(chatId!!).setValue(chatList)
+        val chatList = ChatList(chatId , lastMessage , System.currentTimeMillis().toString() , userUid)
+        databaseReference.child(chatId).setValue(chatList)
 
-        databaseReference = dbChats.child(chatId!!)
+        databaseReference = dbChats.child(chatId)
         val messageModel = Message(userUid , receiverId , lastMessage , type = "text")
         databaseReference.push().setValue(messageModel)
 

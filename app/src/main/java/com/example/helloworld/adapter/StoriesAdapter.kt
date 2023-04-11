@@ -28,6 +28,7 @@ class StoriesAdapter(private val context: Context, private val users: List<UserS
 
     init {
         viewPager.addOnPageChangeListener(this)
+        viewPager.setPageTransformer(true, DepthPageTransformer())
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
@@ -91,14 +92,33 @@ class StoriesAdapter(private val context: Context, private val users: List<UserS
         // Not needed
     }
 
+//    override fun onPageSelected(position: Int) {
+//        // Reset cPosition to 0 when a new user is displayed
+//        cPosition = 0
+//        // Get the current item view from the ViewPager
+//        val itemView = viewPager.getChildAt(position)
+//        // Get the ImageView for the current item view
+//        val imageStatus = itemView?.findViewById<ImageView>(R.id.image_status)
+//        val user = users[position]
+//        // Check if the ImageView is not null before loading the image
+//        imageStatus?.let {
+//            val status = user.status[cPosition]
+//            Picasso.get().load(status.image).into(it)
+//        }
+//    }
+
     override fun onPageSelected(position: Int) {
         // Reset cPosition to 0 when a new user is displayed
         cPosition = 0
-        // Get the current item view from the ViewPager
-        val itemView = viewPager.getChildAt(position)
+
+        // Get the current item view for the selected position
+        val itemView = instantiateItem(viewPager, position) as View
+
         // Get the ImageView for the current item view
-        val imageStatus = itemView?.findViewById<ImageView>(R.id.image_status)
+        val imageStatus = itemView.findViewById<ImageView>(R.id.image_status)
+
         val user = users[position]
+
         // Check if the ImageView is not null before loading the image
         imageStatus?.let {
             val status = user.status[cPosition]
@@ -107,3 +127,44 @@ class StoriesAdapter(private val context: Context, private val users: List<UserS
     }
 
 }
+
+class DepthPageTransformer : ViewPager.PageTransformer {
+
+    companion object {
+        private const val MIN_SCALE = 0.75f
+    }
+
+    override fun transformPage(view: View, position: Float) {
+        val pageWidth = view.width
+        when {
+            position < -1 -> {
+                // This page is way off-screen to the left.
+                view.alpha = 0f
+            }
+            position <= 0 -> {
+                // Use the default slide transition when moving to the left page.
+                view.alpha = 1f
+                view.translationX = 0f
+                view.scaleX = 1f
+                view.scaleY = 1f
+            }
+            position <= 1 -> {
+                // Fade the page out.
+                view.alpha = 1 - position
+
+                // Counteract the default slide transition.
+                view.translationX = pageWidth * -position
+
+                // Scale the page down (between MIN_SCALE and 1).
+                val scaleFactor = MIN_SCALE + (1 - MIN_SCALE) * (1 - Math.abs(position))
+                view.scaleX = scaleFactor
+                view.scaleY = scaleFactor
+            }
+            else -> {
+                // This page is way off-screen to the right.
+                view.alpha = 0f
+            }
+        }
+    }
+}
+

@@ -24,7 +24,7 @@ class ChatRepositoryImpl @Inject constructor() : ChatRepository {
                         val user = snapshot.getValue(User::class.java)
                         val date = appUtil.getTimeAgo(chatList.date.toLong())
 
-                        val chatModel = Chat(chatID = chatList.chatId , name = user!!.username , lastMessage = chatList.lastMessage, "",date,"")
+                        val chatModel = Chat(chatID = chatList.chatId , name = user!!.username , lastMessage = chatList.lastMessage, "",date,user.online,user.typingStatus)
 
                         callback(chatModel)
                     }

@@ -6,5 +6,6 @@ class Chat(
     var lastMessage: String?,
     var image: String?,
     var date: String?,
-    var online: String?
+    var online: String?,
+    var typingStatus : Boolean?
 )

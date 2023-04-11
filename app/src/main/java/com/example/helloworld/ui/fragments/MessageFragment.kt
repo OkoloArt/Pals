@@ -1,7 +1,10 @@
 package com.example.helloworld.ui.fragments
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +18,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.helloworld.adapter.MessageAdapter
 import com.example.helloworld.common.Constants.CHATS
+import com.example.helloworld.common.Constants.USERS
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
 import com.example.helloworld.data.model.Message
@@ -71,6 +75,27 @@ class MessageFragment : Fragment() {
             it.hideKeyboard()
         }
 
+        binding.messageEdittext.editText?.addTextChangedListener(object : TextWatcher{
+            override fun beforeTextChanged(s: CharSequence? , start: Int , count: Int , after: Int) {
+                if (s.toString().trim().isEmpty()){
+                    updateTypingStatus(false)
+                }else{
+                    updateTypingStatus(true)
+                }
+            }
+
+            override fun onTextChanged(s: CharSequence? , start: Int , before: Int , count: Int) {
+                updateTypingStatus(true)
+            }
+
+            override fun afterTextChanged(s: Editable?) {
+                if (s.toString().trim().isEmpty()){
+                    updateTypingStatus(false)
+                }
+            }
+
+        })
+
         bindDetails(receiver.userId!!)
 
         if (chatId == null)
@@ -103,7 +128,12 @@ class MessageFragment : Fragment() {
         messageViewModel.getUser(member){ user ->
             binding.apply {
                 receiverName.text = user.username
-                receiverStatus.text = user.onlineStatus
+                if (user.online.equals("online")){
+                    receiverStatus.setTextColor(Color.parseColor("#00FF00"))
+                }else {
+                    receiverStatus.setTextColor(Color.parseColor("#FF0000"))
+                }
+                receiverStatus.text = user.online
                 receiverImage.setOnClickListener {
                     val action = MessageFragmentDirections.actionMessageFragmentToContactInfoFragment(user)
                     findNavController().navigate(action)
@@ -134,9 +164,28 @@ class MessageFragment : Fragment() {
         return firebaseAuth.uid!!
     }
 
-    fun View.hideKeyboard() {
+    private fun View.hideKeyboard() {
         val inputManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(windowToken, 0)
     }
+
+    private fun updateTypingStatus(status: Boolean) {
+        val databaseReference = firebaseDatabase.child(USERS).child(
+                firebaseAuth.uid!!).child("typingStatus")
+        databaseReference.setValue(status)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateOnlineStatus("online")
+    }
+
+    private fun updateOnlineStatus(status: String) {
+        val databaseReference = firebaseDatabase.child(USERS).child(
+                firebaseAuth.uid!!).child("online")
+        databaseReference.setValue(status)
+    }
+
+
 }
 

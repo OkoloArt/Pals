@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -13,8 +13,7 @@
 
     </data>
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp">
@@ -43,11 +42,21 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
-                    android:layout_marginStart="35dp"
+                    android:layout_marginStart="40dp"
                     android:layout_marginTop="20dp"
                     android:text="@{chatModel.name, default=Nothing}"
                     android:textSize="15dp"
                     android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_alignTop="@id/txtChatName"
+                    android:layout_alignBottom="@id/txtChatName"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@id/txtChatName"
+                    android:contentDescription=""
+                    android:src="@{chatModel.online.equals(`online`)? @drawable/ic_online:@drawable/ic_offline}" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -55,6 +64,7 @@
                     android:layout_below="@id/txtChatName"
                     android:layout_alignStart="@+id/txtChatName"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="10dp"
                     android:orientation="horizontal"
                     android:weightSum="2">
 
@@ -63,7 +73,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1.5"
-                        android:text="@{chatModel.lastMessage,default=Nothing}"
+                        android:text="@{chatModel.typingStatus ? `typing...` : (chatModel.lastMessage != null ? chatModel.lastMessage : ``)}"
                         android:textSize="13dp"
                         android:textStyle="bold" />
 
@@ -97,11 +107,13 @@
                 android:layout_margin="5dp"
                 android:src="@drawable/husky" />
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_anchor="@id/imgContactUserInfo"
-                app:layout_anchorGravity="end|center" />
+<!--            <ImageView-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:contentDescription=""-->
+<!--                android:src="@{chatModel.online.equals(`online`)? @drawable/ic_online:@drawable/ic_offline}"-->
+<!--                app:layout_anchor="@id/imgContactUserInfo"-->
+<!--                app:layout_anchorGravity="end|center" />-->
 
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>

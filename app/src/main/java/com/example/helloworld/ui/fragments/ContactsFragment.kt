@@ -1,6 +1,7 @@
 package com.example.helloworld.ui.fragments
 
 import android.Manifest
+import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.view.LayoutInflater
@@ -61,7 +62,7 @@ class ContactsFragment : Fragment() {
     private fun getMobileContact(){
         mobileContacts = mutableSetOf()
         requireContext().contentResolver.query(
-                ContactsContract.Data.CONTENT_URI,
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 arrayOf(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME),
                 null ,
                 null ,

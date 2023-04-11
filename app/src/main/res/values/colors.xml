@@ -17,4 +17,7 @@
     <color name="colorItemLeft">#ccf896</color>
     <color name="colorItemRight">#a8e6f5</color>
     <color name="colorWhite">#fff</color>
+
+    <color name="offline">#FF0000</color>
+    <color name="online">#00FF00</color>
 </resources>
