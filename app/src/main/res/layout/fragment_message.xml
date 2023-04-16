@@ -72,11 +72,31 @@
         android:layout_marginTop="12dp"
         android:layout_below="@id/l1">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
             <androidx.recyclerview.widget.RecyclerView
                 android:layout_marginTop="5dp"
+                android:layout_above="@id/animationView"
                 android:id="@+id/messageRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/animationView"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:visibility="gone"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="5dp"
+                app:lottie_rawRes="@raw/typing_animation"
+                app:lottie_autoPlay="true"
+                app:lottie_repeatCount="20"
+                app:lottie_loop="true"/>
+
+
+        </RelativeLayout>
 
     </com.google.android.material.card.MaterialCardView>
 

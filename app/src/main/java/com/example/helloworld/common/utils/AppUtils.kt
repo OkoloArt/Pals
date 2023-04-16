@@ -12,17 +12,17 @@ class AppUtil {
 
     fun getTimeAgo(time: Long): String? {
 
-        var time = time
+        var currentTime = time
 
-        if (time < 1000000000000L) {
-            time *= 1000
+        if (currentTime < 1000000000000L) {
+            currentTime *= 1000
         }
         val now = System.currentTimeMillis()
-        if (time > now || time <= 0) {
+        if (currentTime > now || currentTime <= 0) {
             return null
         }
 
-        val diff = now - time
+        val diff = now - currentTime
 
         return when {
             diff < MINUTE_MILLIS -> {

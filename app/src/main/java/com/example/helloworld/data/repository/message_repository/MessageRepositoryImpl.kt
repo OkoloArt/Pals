@@ -1,5 +1,14 @@
 package com.example.helloworld.data.repository.message_repository
 
+import android.content.Context
+import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.lifecycle.MutableLiveData
+import com.android.volley.DefaultRetryPolicy
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
+import com.example.helloworld.common.Constants
 import com.example.helloworld.common.Constants.CHATS
 import com.example.helloworld.common.Constants.CHAT_LIST
 import com.example.helloworld.common.Constants.USERS
@@ -11,6 +20,7 @@ import com.example.helloworld.data.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
+import org.json.JSONObject
 import javax.inject.Inject
 
 class MessageRepositoryImpl @Inject constructor() : MessageRepository {
@@ -19,6 +29,7 @@ class MessageRepositoryImpl @Inject constructor() : MessageRepository {
     private var dbChatList = firebaseDatabase.child(CHAT_LIST)
     private var dbChats = firebaseDatabase.child(CHATS)
     private var dbUser = firebaseDatabase.child(USERS)
+    private var currentUser : User? = null
 
     override fun checkChat(receiverId: String , callback: (String) -> Unit) {
         val databaseReference = dbChatList.child(userUid)
@@ -101,5 +112,77 @@ class MessageRepositoryImpl @Inject constructor() : MessageRepository {
                 }
             })
     }
+
+    override fun getCurrentUser(callback: (User) -> Unit) {
+            dbUser.child(firebaseAuth.uid!!)
+                .addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val user = snapshot.getValue(User::class.java)
+                        user?.userId = snapshot.key
+                        callback(user!!)
+                    }
+                    override fun onCancelled(error: DatabaseError) {}
+                })
+    }
+
+    override fun getToken(message: String, receiver : User, sender : User, chatId: String, context: Context) {
+        val databaseReference = dbUser.child(receiver.userId!!)
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val token = snapshot.child("token").value.toString()
+
+                    val to = JSONObject()
+                    val data = JSONObject()
+
+                    data.put("hisId", firebaseAuth.uid)
+                    data.put("hisImage", sender.image)
+                    data.put("title", sender.username)
+                    data.put("message", message)
+                    data.put("chatId", chatId)
+
+                    to.put("to", token)
+                    to.put("data", data)
+                    sendNotification(to, context)
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
+    override fun sendNotification(token: JSONObject, context: Context) {
+        val request: JsonObjectRequest = object : JsonObjectRequest(
+                Method.POST ,
+                Constants.NOTIFICATION_URL ,
+                token ,
+                Response.Listener { response: JSONObject ->
+
+                    Log.d("TAG" , "onResponse: $response")
+                } ,
+                Response.ErrorListener {
+
+                    Log.d("TAG" , "onError: $it")
+                }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val map: MutableMap<String, String> = HashMap()
+                map["Authorization"] = "key=${Constants.SERVER_KEY}"
+                map["Content-type"] = "application/json"
+                return map
+            }
+            override fun getBodyContentType(): String {
+                return "application/json"
+            }
+        }
+        val requestQueue = Volley.newRequestQueue(context)
+        request.retryPolicy = DefaultRetryPolicy(
+                30000 ,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES ,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+        )
+        requestQueue.add(request)
+    }
+
 
 }

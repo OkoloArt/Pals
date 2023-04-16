@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,16 +17,29 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.volley.DefaultRetryPolicy
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 import com.example.helloworld.adapter.MessageAdapter
 import com.example.helloworld.common.Constants.CHATS
+import com.example.helloworld.common.Constants.NOTIFICATION_URL
+import com.example.helloworld.common.Constants.SERVER_KEY
 import com.example.helloworld.common.Constants.USERS
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
 import com.example.helloworld.data.model.Message
+import com.example.helloworld.data.model.User
 import com.example.helloworld.databinding.FragmentMessageBinding
 import com.example.helloworld.ui.viewmodel.MessageViewModel
+import com.example.helloworld.ui.viewmodel.ProfileViewModel
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.AndroidEntryPoint
+import org.json.JSONObject
 
 
 /**
@@ -44,11 +58,10 @@ class MessageFragment : Fragment() {
 
     private val messageViewModel : MessageViewModel by viewModels()
     private lateinit var messageAdapter: MessageAdapter
+    private val profileViewModel : ProfileViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater , container: ViewGroup? ,
-        savedInstanceState: Bundle? ,
-    ): View? {
+
+    override fun onCreateView(inflater: LayoutInflater , container: ViewGroup? , savedInstanceState: Bundle? , ): View {
         // Inflate the layout for this fragment
         _binding = FragmentMessageBinding.inflate(layoutInflater , container , false)
         return binding.root
@@ -69,12 +82,14 @@ class MessageFragment : Fragment() {
                 Toast.makeText(requireContext() , "Enter Message" , Toast.LENGTH_SHORT).show()
             }
             else{
-               messageViewModel.sendMessage(message , receiver.userId!!, chatId)
+                messageViewModel.sendMessage(message , receiver.userId!! , chatId)
+                messageViewModel.getCurrentUser(){ user ->
+                    messageViewModel.getToken(message,receiver,user,chatId!!,requireContext())
+                }
                 binding.messageEdittext.editText?.text?.clear()
             }
             it.hideKeyboard()
         }
-
         binding.messageEdittext.editText?.addTextChangedListener(object : TextWatcher{
             override fun beforeTextChanged(s: CharSequence? , start: Int , count: Int , after: Int) {
                 if (s.toString().trim().isEmpty()){
@@ -95,7 +110,6 @@ class MessageFragment : Fragment() {
             }
 
         })
-
         bindDetails(receiver.userId!!)
 
         if (chatId == null)
@@ -138,6 +152,14 @@ class MessageFragment : Fragment() {
                     val action = MessageFragmentDirections.actionMessageFragmentToContactInfoFragment(user)
                     findNavController().navigate(action)
                 }
+                if (user.typingStatus == true) {
+                    animationView.visibility = View.VISIBLE
+                    animationView.playAnimation()
+                } else {
+                    animationView.cancelAnimation()
+                    animationView.visibility = View.GONE
+
+                }
             }
         }
     }
@@ -158,10 +180,6 @@ class MessageFragment : Fragment() {
                         findNavController().navigate(action)
                     }
                 })
-    }
-
-    private fun getUid (): String{
-        return firebaseAuth.uid!!
     }
 
     private fun View.hideKeyboard() {
@@ -185,7 +203,5 @@ class MessageFragment : Fragment() {
                 firebaseAuth.uid!!).child("online")
         databaseReference.setValue(status)
     }
-
-
 }
 

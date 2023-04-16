@@ -9,7 +9,7 @@ import com.google.firebase.ktx.Firebase
 object FirebaseUtils {
 
         val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-        var firebaseUser: FirebaseUser? = firebaseAuth.currentUser
+        val firebaseUser = firebaseAuth.currentUser
         val firebaseDatabase : DatabaseReference = Firebase.database.reference
 
 }

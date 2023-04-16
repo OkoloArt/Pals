@@ -7,4 +7,6 @@
     <string name="greeting">Good morning</string>
     <string name="send_message">send_message</string>
     <string name="hint_message">Type a message</string>
+    <string name="channel_name">pals_channel</string>
+    <string name="channel_description">pals_description</string>
 </resources>
