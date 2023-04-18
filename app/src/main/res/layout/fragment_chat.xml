@@ -21,17 +21,6 @@
         app:civ_border_color="@color/colorPrimary"
         app:civ_border_width="1dp" />
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/search_list"
-        android:layout_marginStart="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_toStartOf="@id/userImage"
-        android:layout_toEndOf="@id/greet"
-        android:layout_width="match_parent"
-        android:layoutDirection="rtl"
-        app:queryHint="search chat"
-        android:layout_height="wrap_content" />
-
     <LinearLayout
         android:id="@+id/greet"
         android:layout_marginStart="10dp"
