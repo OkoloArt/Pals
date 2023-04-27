@@ -1,12 +1,18 @@
 package com.example.helloworld.ui.fragments
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.helloworld.adapter.ChatAdapter
@@ -24,6 +30,7 @@ import com.example.helloworld.ui.viewmodel.ChatViewModel
 import com.example.helloworld.ui.viewmodel.ProfileViewModel
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
@@ -40,6 +47,8 @@ class ChatFragment : Fragment() {
     private val profileViewModel : ProfileViewModel by viewModels()
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var statusAdapter: StatusAdapter
+
+    private var imageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -136,6 +145,25 @@ class ChatFragment : Fragment() {
                 findNavController().navigate(action)
             }
         }
+    }
+
+    private var pickImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // There are no request codes
+            imageUri = result.data?.data
+            if (imageUri == null) return@registerForActivityResult
+            requireActivity().contentResolver.takePersistableUriPermission(imageUri!! , Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    //        binding.profileImage.setImageURI(imageUri)
+//            imageUri?.let { lifecycleScope.launch { userPreferences.saveProfilePic(it.toString()) }}
+        }
+    }
+
+    private fun setImageStatus() {
+        val gallery = Intent(Intent.ACTION_OPEN_DOCUMENT , MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        gallery.flags = (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+        pickImageLauncher.launch(gallery)
     }
 
     private fun getUsers(): List<UserStatus> {

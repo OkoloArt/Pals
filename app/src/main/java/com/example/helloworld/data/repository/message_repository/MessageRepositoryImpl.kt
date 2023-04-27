@@ -11,6 +11,8 @@ import com.android.volley.toolbox.Volley
 import com.example.helloworld.common.Constants
 import com.example.helloworld.common.Constants.CHATS
 import com.example.helloworld.common.Constants.CHAT_LIST
+import com.example.helloworld.common.Constants.NOTIFICATION_URL
+import com.example.helloworld.common.Constants.SERVER_KEY
 import com.example.helloworld.common.Constants.USERS
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
@@ -155,7 +157,7 @@ class MessageRepositoryImpl @Inject constructor() : MessageRepository {
     override fun sendNotification(token: JSONObject, context: Context) {
         val request: JsonObjectRequest = object : JsonObjectRequest(
                 Method.POST ,
-                Constants.NOTIFICATION_URL ,
+                NOTIFICATION_URL ,
                 token ,
                 Response.Listener { response: JSONObject ->
 
@@ -167,7 +169,7 @@ class MessageRepositoryImpl @Inject constructor() : MessageRepository {
                 }) {
             override fun getHeaders(): MutableMap<String, String> {
                 val map: MutableMap<String, String> = HashMap()
-                map["Authorization"] = "key=${Constants.SERVER_KEY}"
+                map["Authorization"] = "key=${SERVER_KEY}"
                 map["Content-type"] = "application/json"
                 return map
             }

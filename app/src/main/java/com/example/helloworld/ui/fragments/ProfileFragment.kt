@@ -1,10 +1,15 @@
 package com.example.helloworld.ui.fragments
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.helloworld.data.model.ImageStatus
@@ -28,6 +33,8 @@ class ProfileFragment : Fragment() {
 
     private val profileViewModel : ProfileViewModel by viewModels()
 
+    private var imageUri: Uri? = null
+
     override fun onCreateView(
         inflater: LayoutInflater , container: ViewGroup? ,
         savedInstanceState: Bundle? ,
@@ -47,6 +54,25 @@ class ProfileFragment : Fragment() {
                 showDialog(user)
             }
         }
+    }
+
+    private var pickImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // There are no request codes
+            imageUri = result.data?.data
+            if (imageUri == null) return@registerForActivityResult
+            requireActivity().contentResolver.takePersistableUriPermission(imageUri!! , Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            //        binding.profileImage.setImageURI(imageUri)
+//            imageUri?.let { lifecycleScope.launch { userPreferences.saveProfilePic(it.toString()) }}
+        }
+    }
+
+    private fun setProfileImage() {
+        val gallery = Intent(Intent.ACTION_OPEN_DOCUMENT , MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+        gallery.flags = (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+        pickImageLauncher.launch(gallery)
     }
 
     private fun showDialog(user: User){
@@ -69,5 +95,6 @@ class ProfileFragment : Fragment() {
             .show()
 
     }
+
 
 }
