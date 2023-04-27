@@ -13,4 +13,6 @@ object Constants {
     const val RESULT_KEY = "RESULT_KEY"
     const val RECEIVER_ID ="receiverId"
     const val CHAT_ID = "chatId"
+    const val RECEIVER_IMAGE = "image"
+    const val RECEIVER_NAME = "name"
 }

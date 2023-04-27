@@ -17,6 +17,8 @@ import com.example.helloworld.R
 import com.example.helloworld.common.Constants.CHANNEL_ID
 import com.example.helloworld.common.Constants.CHAT_ID
 import com.example.helloworld.common.Constants.RECEIVER_ID
+import com.example.helloworld.common.Constants.RECEIVER_IMAGE
+import com.example.helloworld.common.Constants.RECEIVER_NAME
 import com.example.helloworld.common.Constants.RESULT_KEY
 import com.example.helloworld.common.Constants.USERS
 import com.example.helloworld.common.utils.FirebaseUtils
@@ -67,7 +69,7 @@ class NotificationService : FirebaseMessagingService() {
                 .setDestination(R.id.messageFragment)
                 .createPendingIntent()
 
-            createNormalNotification(title!!, message!!,hisId!!,chatUid!!,pendingIntent)
+            createNormalNotification(title!!, message!!,hisId!!,chatUid!!, hisImage!!, pendingIntent)
         }
     }
 
@@ -79,12 +81,12 @@ class NotificationService : FirebaseMessagingService() {
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    private fun createNormalNotification(title: String , message: String , receiverId: String , chatId: String , pendingIntent: PendingIntent) {
+    private fun createNormalNotification(title: String , message: String , receiverId: String , chatId: String ,image : String, pendingIntent: PendingIntent) {
 
         val uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
         val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            PendingIntent.FLAG_MUTABLE
+            PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         }else 0
 
         val remoteInput = RemoteInput.Builder(RESULT_KEY).run {
@@ -93,13 +95,15 @@ class NotificationService : FirebaseMessagingService() {
         }
 
         val replyIntent = Intent(this, NotificationReceiver::class.java).apply {
-            action = "REPLY_ACTION"
+          //  action = "REPLY_ACTION"
             putExtra(RECEIVER_ID, receiverId)
             putExtra(CHAT_ID, chatId)
+            putExtra(RECEIVER_NAME, title)
+            putExtra(RECEIVER_IMAGE, image)
             putExtra("NOTIFICATION_ID", notificationId)
         }
 
-        val replyPendingIntent = PendingIntent.getBroadcast(this,1,replyIntent,flag)
+        val replyPendingIntent = PendingIntent.getBroadcast(this,1,replyIntent, flag )
 
         val person = Person.Builder().setName(title).build()
         val notificationStyle = NotificationCompat.MessagingStyle(person)
@@ -129,28 +133,5 @@ class NotificationService : FirebaseMessagingService() {
         }
 
     }
-
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    private fun createOreoNotification(title: String, message: String, pendingIntent: PendingIntent) {
-//
-//        val channel = NotificationChannel(CHANNEL_ID, "Message", NotificationManager.IMPORTANCE_HIGH)
-//        channel.setShowBadge(true)
-//        channel.enableLights(true)
-//        channel.enableVibration(true)
-//        channel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
-//
-//        val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-//        manager.createNotificationChannel(channel)
-//
-//        val notification = Notification.Builder(this , CHANNEL_ID)
-//            .setContentTitle(title)
-//            .setContentText(message)
-//            .setContentIntent(pendingIntent)
-//            .setSmallIcon(R.drawable.ic_launcher_foreground)
-//            .setAutoCancel(true)
-//            .build()
-//
-//        manager.notify(100, notification)
-//    }
 
 }
