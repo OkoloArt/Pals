@@ -45,11 +45,42 @@
 
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:padding="10dp"
+        android:id="@+id/user_status"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/greet"
+        android:layout_marginStart="10dp"
+        android:layout_height="wrap_content">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="60dp"
+            android:id="@+id/status"
+            android:background="@drawable/single_status_background"
+            app:civ_border_color="#ccf896"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_add"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/user_status_name"
+            android:layout_below="@id/status"
+            android:layout_marginTop="5dp"
+            android:text="Collins"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </RelativeLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/status_recyclerview"
-        android:layout_marginStart="10dp"
         android:layout_below="@id/greet"
         android:layout_marginEnd="10dp"
+        android:layout_toEndOf="@id/user_status"
         android:layout_marginTop="10dp"
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -60,7 +91,7 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_marginTop="12dp"
         style="@style/CustomCardViewStyle"
-        android:layout_below="@id/status_recyclerview"
+        android:layout_below="@id/user_status"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

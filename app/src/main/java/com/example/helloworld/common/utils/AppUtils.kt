@@ -1,5 +1,9 @@
 package com.example.helloworld.common.utils
 
+import android.content.Context
+import android.provider.ContactsContract
+import com.example.helloworld.data.model.User
+
 class AppUtil {
 
     companion object {
@@ -8,6 +12,24 @@ class AppUtil {
         private const val MINUTE_MILLIS: Int = 60 * SECOND_MILLIS
         private const val HOUR_MILLIS: Int = 60 * MINUTE_MILLIS
         private const val DAY_MILLIS: Int = 24 * HOUR_MILLIS
+
+        @JvmStatic
+        fun getMobileContacts(context: Context): List<User> {
+            val mobileContacts = mutableListOf<User>()
+            context.contentResolver.query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI ,
+                    arrayOf(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME) ,
+                    null ,
+                    null ,
+                    "${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME} ASC"
+            )?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    val name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
+                    mobileContacts.add(User(username = name))
+                }
+            }
+            return mobileContacts
+        }
     }
 
     fun getTimeAgo(time: Long): String? {
@@ -48,5 +70,7 @@ class AppUtil {
             }
         }
     }
+
+
 
 }

@@ -14,6 +14,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.helloworld.adapter.ContactAdapter
+import com.example.helloworld.common.utils.AppUtil
+import com.example.helloworld.common.utils.AppUtil.Companion.getMobileContacts
 import com.example.helloworld.data.model.User
 import com.example.helloworld.databinding.FragmentContactsBinding
 import com.example.helloworld.ui.viewmodel.ContactViewModel
@@ -38,7 +40,6 @@ class ContactsFragment : Fragment() {
     private var _binding : FragmentContactsBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var mobileContacts : MutableSet<User>
     private lateinit var contactAdapter: ContactAdapter
 
     private val contactViewModel : ContactViewModel by viewModels()
@@ -60,19 +61,7 @@ class ContactsFragment : Fragment() {
     }
 
     private fun getMobileContact(){
-        mobileContacts = mutableSetOf()
-        requireContext().contentResolver.query(
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                arrayOf(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME),
-                null ,
-                null ,
-                "${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME} ASC"
-        )?.use { cursor ->
-            while (cursor.moveToNext()) {
-                val name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
-                mobileContacts.add(User(username = name))
-            }
-        }
+        val mobileContacts = getMobileContacts(requireContext())
         profileViewModel.getUser().observe(viewLifecycleOwner){ currentUser ->
             contactViewModel.getAppContact(currentUser,mobileContacts.toList()) { user ->
                 binding.contactRecyclerview.apply {
