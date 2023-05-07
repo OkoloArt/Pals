@@ -49,7 +49,7 @@ class ProfileFragment : Fragment() {
 
         profileViewModel.getUser().observe(viewLifecycleOwner){ user ->
             binding.nameTextview.text = user.username
-            Toast.makeText(requireContext(), user.userId, Toast.LENGTH_SHORT).show()
+     //       Toast.makeText(requireContext(), user.imageStatus!!.size.toString(), Toast.LENGTH_SHORT).show()
             binding.editProfile.setOnClickListener {
                 showDialog(user)
             }
@@ -77,8 +77,8 @@ class ProfileFragment : Fragment() {
 
     private fun showDialog(user: User){
 
-        val newItem = ImageStatus("https://images.unsplash.com/photo-1629246999700-1e7ad7a1ba03?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1612&q=80" , "2023-04-10")
-        user.imageStatus?.add(newItem)
+//        val newItem = ImageStatus("https://images.unsplash.com/photo-1629246999700-1e7ad7a1ba03?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1612&q=80" , "2023-04-10")
+//        user.imageStatus?.add(newItem)
         user.username = "Death"
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Update")

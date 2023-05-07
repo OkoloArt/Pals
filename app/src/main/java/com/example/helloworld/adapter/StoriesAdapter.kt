@@ -47,7 +47,7 @@ class StoriesAdapter(private val context: Context, private val users: List<UserS
         cPosition = 0
 
         // Set the user's first image status
-        Picasso.get().load(user.status[cPosition].image).into(imageStatus)
+        Picasso.get().load(user.status.first().image).into(imageStatus)
 
         // Set the position as a tag on the itemView for later use
         itemView.tag = position

@@ -14,10 +14,12 @@ import com.example.helloworld.common.Constants.CHAT_LIST
 import com.example.helloworld.common.Constants.NOTIFICATION_URL
 import com.example.helloworld.common.Constants.SERVER_KEY
 import com.example.helloworld.common.Constants.USERS
+import com.example.helloworld.common.utils.AppUtil
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
 import com.example.helloworld.data.model.ChatList
 import com.example.helloworld.data.model.Message
+import com.example.helloworld.data.model.SecondUser
 import com.example.helloworld.data.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -31,7 +33,8 @@ class MessageRepositoryImpl @Inject constructor() : MessageRepository {
     private var dbChatList = firebaseDatabase.child(CHAT_LIST)
     private var dbChats = firebaseDatabase.child(CHATS)
     private var dbUser = firebaseDatabase.child(USERS)
-    private var currentUser : User? = null
+    val appUtil = AppUtil()
+
 
     override fun checkChat(receiverId: String , callback: (String) -> Unit) {
         val databaseReference = dbChatList.child(userUid)
@@ -103,9 +106,10 @@ class MessageRepositoryImpl @Inject constructor() : MessageRepository {
             .addValueEventListener(object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()){
-                        val user = snapshot.getValue(User::class.java)
+                        val secondUser = snapshot.getValue(SecondUser::class.java)
+                        val user = appUtil.mapSecondUserToUser(secondUser!!)
 //                        user!!.userId = snapshot.key
-                        callback(user!!)
+                        callback(user)
                     }
                 }
 
@@ -119,9 +123,10 @@ class MessageRepositoryImpl @Inject constructor() : MessageRepository {
             dbUser.child(firebaseAuth.uid!!)
                 .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
-                        val user = snapshot.getValue(User::class.java)
-                        user?.userId = snapshot.key
-                        callback(user!!)
+                        val secondUser = snapshot.getValue(SecondUser::class.java)
+                        secondUser?.userId = snapshot.key
+                        val user = appUtil.mapSecondUserToUser(secondUser!!)
+                        callback(user)
                     }
                     override fun onCancelled(error: DatabaseError) {}
                 })

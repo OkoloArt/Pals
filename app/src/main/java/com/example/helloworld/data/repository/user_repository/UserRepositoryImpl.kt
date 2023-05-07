@@ -3,8 +3,11 @@ package com.example.helloworld.data.repository.user_repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.helloworld.common.Constants.USERS
+import com.example.helloworld.common.utils.AppUtil
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
+import com.example.helloworld.data.model.ImageStatus
+import com.example.helloworld.data.model.SecondUser
 import com.example.helloworld.data.model.User
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -17,6 +20,8 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
 
     private var liveData : MutableLiveData<User>? = null
     private val dbUser = firebaseDatabase.child(USERS)
+
+    val appUtil = AppUtil()
 
     override fun createUser(email: String , password: String): Task<AuthResult> {
         return firebaseAuth.createUserWithEmailAndPassword(email , password)
@@ -37,8 +42,9 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
             dbUser.child(firebaseAuth.uid!!)
                 .addValueEventListener(object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
-                        val user = snapshot.getValue(User::class.java)
-                        user?.userId = snapshot.key
+                        val secondUser = snapshot.getValue(SecondUser::class.java)
+                        secondUser!!.userId = snapshot.key
+                        val user = appUtil.mapSecondUserToUser(secondUser)
                         liveData!!.value = user
                     }
                     override fun onCancelled(error: DatabaseError) {}
@@ -59,9 +65,10 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
                     for (data in snapshot.children) {
                         val name = data.child("username").value.toString()
                         mobileContacts.find { it.username == name && it.username != user.username }?.let {
-                            val newUser = data.getValue(User::class.java)
-                            newUser?.userId = data.key
-                            newUser?.let { appContact.add(it) }
+                            val secondUser = data.getValue(SecondUser::class.java)
+                            secondUser?.userId = data.key
+                            val newUser = appUtil.mapSecondUserToUser(secondUser!!)
+                            newUser.let { appContact.add(it) }
                         }
                     }
                     callback(appContact)

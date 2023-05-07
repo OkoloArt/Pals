@@ -1,8 +1,5 @@
 package com.example.helloworld.common.services
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.media.RingtoneManager
@@ -21,12 +18,10 @@ import com.example.helloworld.common.Constants.RECEIVER_IMAGE
 import com.example.helloworld.common.Constants.RECEIVER_NAME
 import com.example.helloworld.common.Constants.RESULT_KEY
 import com.example.helloworld.common.Constants.USERS
-import com.example.helloworld.common.utils.FirebaseUtils
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
 import com.example.helloworld.data.model.User
 import com.example.helloworld.ui.fragments.MessageFragmentArgs
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlin.random.Random

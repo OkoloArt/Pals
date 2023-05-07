@@ -54,19 +54,32 @@
         android:layout_marginStart="10dp"
         android:layout_height="wrap_content">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="60dp"
-            android:id="@+id/status"
-            android:background="@drawable/single_status_background"
-            app:civ_border_color="#ccf896"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_add"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:id="@+id/frame_layout"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="60dp"
+                android:id="@+id/status"
+                android:background="@drawable/single_status_background"
+                app:civ_border_color="#ccf896"
+                android:src="@drawable/husky"
+                android:layout_height="60dp"
+                android:gravity="center" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/set_status"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_add_circle"
+                android:layout_gravity="bottom|end" />
+
+        </FrameLayout>
 
         <TextView
             android:id="@+id/user_status_name"
-            android:layout_below="@id/status"
+            android:layout_below="@id/frame_layout"
             android:layout_marginTop="5dp"
             android:text="Collins"
             android:textStyle="bold"

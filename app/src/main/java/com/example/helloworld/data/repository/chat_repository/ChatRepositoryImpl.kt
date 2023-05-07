@@ -5,6 +5,7 @@ import com.example.helloworld.common.utils.AppUtil
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
 import com.example.helloworld.data.model.Chat
 import com.example.helloworld.data.model.ChatList
+import com.example.helloworld.data.model.SecondUser
 import com.example.helloworld.data.model.User
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -21,10 +22,10 @@ class ChatRepositoryImpl @Inject constructor() : ChatRepository {
             .addValueEventListener(object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()){
-                        val user = snapshot.getValue(User::class.java)
+                        val secondUser = snapshot.getValue(SecondUser::class.java)
                         val date = appUtil.getTimeAgo(chatList.date.toLong())
-
-                        val chatModel = Chat(chatID = chatList.chatId , name = user!!.username , lastMessage = chatList.lastMessage, "",date,user.online,user.typingStatus)
+                        val user = appUtil.mapSecondUserToUser(secondUser!!)
+                        val chatModel = Chat(chatID = chatList.chatId , name = user.username , lastMessage = chatList.lastMessage , "" , date , user.online , user.typingStatus)
 
                         callback(chatModel)
                     }
@@ -41,9 +42,10 @@ class ChatRepositoryImpl @Inject constructor() : ChatRepository {
             .addValueEventListener(object : ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()){
-                        val user = snapshot.getValue(User::class.java)
-                        user!!.chatId = chatList.chatId
-                        user.userId = snapshot.key
+                        val secondUser = snapshot.getValue(SecondUser::class.java)
+                        secondUser!!.chatId = chatList.chatId
+                        secondUser.userId = snapshot.key
+                        val user = appUtil.mapSecondUserToUser(secondUser)
                         callback(user)
                     }
                 }

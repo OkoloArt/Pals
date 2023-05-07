@@ -2,6 +2,7 @@ package com.example.helloworld.common.utils
 
 import android.content.Context
 import android.provider.ContactsContract
+import com.example.helloworld.data.model.SecondUser
 import com.example.helloworld.data.model.User
 
 class AppUtil {
@@ -71,6 +72,20 @@ class AppUtil {
         }
     }
 
-
+    fun mapSecondUserToUser(secondUser: SecondUser): User {
+        return User(
+                userId = secondUser.userId,
+                email = secondUser.email,
+                username = secondUser.username,
+                chatId = secondUser.chatId,
+                online = secondUser.online,
+                typingStatus = secondUser.typingStatus,
+                imageStatus = secondUser.imageStatus?.values?.toList()?.toMutableList(),
+                status = secondUser.status,
+                image = secondUser.image,
+                number = secondUser.number,
+                token = secondUser.token,
+        )
+    }
 
 }

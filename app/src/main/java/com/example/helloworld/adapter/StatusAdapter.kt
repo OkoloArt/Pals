@@ -11,8 +11,12 @@ class StatusAdapter(private val users: List<UserStatus> , private val onItemClic
 
     class StatusViewHolder(private val bindStatusItemLayoutBinding: StatusItemLayoutBinding): RecyclerView.ViewHolder(bindStatusItemLayoutBinding.root) {
         fun bind(userStatus: UserStatus){
-            Picasso.get().load(userStatus.status[0].image).into(bindStatusItemLayoutBinding.status)
-            bindStatusItemLayoutBinding.username.text = userStatus.name
+            if (userStatus.status.isNotEmpty()) {
+                Picasso.get().load(userStatus.status.first().image)
+                    .into(bindStatusItemLayoutBinding.status)
+                val fullName = userStatus.name!!.split(" ")
+                bindStatusItemLayoutBinding.username.text = fullName[0]
+            }
         }
     }
 

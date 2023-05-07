@@ -1,5 +1,6 @@
 package com.example.helloworld.ui.fragments
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.helloworld.R
 import com.example.helloworld.adapter.ChatAdapter
 import com.example.helloworld.adapter.StatusAdapter
 import com.example.helloworld.common.Constants.CHAT_LIST
@@ -21,6 +23,7 @@ import com.example.helloworld.common.Constants.USERS
 import com.example.helloworld.common.utils.AppUtil.Companion.getMobileContacts
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
+import com.example.helloworld.common.utils.FirebaseUtils.storageRef
 import com.example.helloworld.data.model.ChatList
 import com.example.helloworld.data.model.ImageStatus
 import com.example.helloworld.data.model.User
@@ -30,9 +33,19 @@ import com.example.helloworld.ui.viewmodel.ChatViewModel
 import com.example.helloworld.ui.viewmodel.ContactViewModel
 import com.example.helloworld.ui.viewmodel.ProfileViewModel
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionDeniedResponse
+import com.karumi.dexter.listener.PermissionGrantedResponse
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.single.PermissionListener
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.random.Random
+
 
 /**
  * A simple [Fragment] subclass.
@@ -50,14 +63,8 @@ class ChatFragment : Fragment() {
     private val contactViewModel : ContactViewModel by viewModels()
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var statusAdapter: StatusAdapter
-    private var user : User? = null
 
     private var imageUri: Uri? = null
-    private var imageString : String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater , container: ViewGroup? ,
@@ -82,9 +89,8 @@ class ChatFragment : Fragment() {
 
         profileViewModel.getUser().observe(viewLifecycleOwner){ currentUser ->
             bindDetail(currentUser)
-            user = currentUser
         }
-        binding.status.setOnClickListener{
+        binding.setStatus.setOnClickListener{
             uploadImageStatus()
         }
     }
@@ -94,13 +100,12 @@ class ChatFragment : Fragment() {
         val userStatus = mutableSetOf<UserStatus>()
         profileViewModel.getUser().observe(viewLifecycleOwner) { currentUser ->
             contactViewModel.getAppContact(currentUser, mobileContacts) { user ->
-                for (i in user.indices) {
-                    if (user[i].imageStatus!!.isNotEmpty()) {
-                        userStatus.add(UserStatus(user[i].username, user[i].imageStatus!!.toList()))
+                for (i in 0 until user.size) {
+                    if (user[i].imageStatus != null && user[i].imageStatus!!.isNotEmpty()) {
+                        userStatus.add(UserStatus(user[i].username , user[i].imageStatus!!))
                     }
                 }
-                // Move the return statement inside the observe block
-                val userStatusList = userStatus.toList()
+                val userStatusList = userStatus.toList().distinctBy { it.name }.toMutableList()
                 statusAdapter = StatusAdapter(userStatusList) { num ->
                     val action = ChatFragmentDirections.actionChatFragmentToStatusFragment(num , userStatusList.toTypedArray())
                     findNavController().navigate(action)
@@ -166,8 +171,14 @@ class ChatFragment : Fragment() {
                 val action = ChatFragmentDirections.actionChatFragmentToProfileFragment()
                 findNavController().navigate(action)
             }
+//            if (user.imageStatus.isNullOrEmpty()){
+//                Picasso.get().load(R.drawable.husky).into(binding.status)
+//            }
+            val fullName = user.username!!.split(" ")
+            userStatusName.text = fullName[0]
         }
     }
+
 
     private var pickImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -175,10 +186,9 @@ class ChatFragment : Fragment() {
             imageUri = result.data?.data
             if (imageUri == null) return@registerForActivityResult
             requireActivity().contentResolver.takePersistableUriPermission(imageUri!! , Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            imageString = imageUri.toString()
             binding.status.setImageURI(imageUri)
-            setImageStatus(user!!)
-//            imageUri?.let { lifecycleScope.launch { userPreferences.saveProfilePic(it.toString()) }}
+            uploadImage(imageUri!!)
+
         }
     }
 
@@ -190,12 +200,78 @@ class ChatFragment : Fragment() {
         pickImageLauncher.launch(gallery)
     }
 
-    private fun setImageStatus(user: User){
+    private fun uploadImages(imageFiles: List<File> , dates: List<Date> , onComplete: () -> Unit) {
+        val imageCount = imageFiles.size
+
+        // Iterate over the list of image files and upload each one with its corresponding date
+        imageFiles.forEachIndexed { index, file ->
+            val imageUri = Uri.fromFile(file)
+            val imageName = "image_$index.jpg"
+            val date = dates[index]
+            val dateStr = date.toString() // You can format the date string as desired
+
+            // Create a reference to the image file in Firebase Cloud Storage
+            val imageRef = storageRef!!.child("images/$imageName")
+
+            // Upload the image file to Firebase Cloud Storage
+            imageRef.putFile(imageUri)
+                .addOnSuccessListener { taskSnapshot ->
+                    // Get the download URL of the uploaded image
+                    imageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                        val imageUrl = downloadUrl.toString()
+
+                        // Create a map to store the image and date data
+                        val data = hashMapOf(
+                                "image_url" to imageUrl,
+                                "date" to dateStr
+                        )
+
+                        // Store the image and date data in Firebase Firestore or Realtime Database, for example
+                        // ...
+
+                        if (index == imageCount - 1) {
+                            onComplete() // Call the onComplete callback when all images have been uploaded
+                        }
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    // Handle any errors that occur during the upload process
+                    // ...
+                }
+        }
+    }
+
+    private fun uploadImage(image: Uri) {
+
+        val number = Random.nextInt(1000)
+
         val dateFormat = SimpleDateFormat("yyyy-MM-dd" , Locale.getDefault())
         val currentDate = dateFormat.format(Date())
-        val newImage = ImageStatus(imageString!! , currentDate)
-        user.imageStatus!!.add(newImage)
-        profileViewModel.updateUser(user)
+        val databaseReference = firebaseDatabase.child(USERS).child(
+                firebaseAuth.uid!!).child("imageStatus").push()
+
+
+        // Create a reference to the image file in Firebase Cloud Storage
+        val imageRef = storageRef.child(getUID()!!+number)
+
+        // Upload the image file to Firebase Cloud Storage
+        imageRef.putFile(image)
+            .addOnSuccessListener { taskSnapshot ->
+                // Get the download URL of the uploaded image
+                imageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                    val imageUrl = downloadUrl.toString()
+                    // Store the image and date data in Firebase Firestore or Realtime Database, for example
+                    // ...r
+                    val newImageStatus = ImageStatus(imageUrl , currentDate)
+                    databaseReference.setValue(newImageStatus)
+
+                }
+            }
+            .addOnFailureListener { exception ->
+                // Handle any errors that occur during the upload process
+                // ...
+            }
     }
+
 
 }
