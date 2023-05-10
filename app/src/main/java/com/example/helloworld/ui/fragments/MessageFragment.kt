@@ -2,44 +2,36 @@ package com.example.helloworld.ui.fragments
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.InsetDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.android.volley.DefaultRetryPolicy
-import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
+import com.example.helloworld.R
 import com.example.helloworld.adapter.MessageAdapter
 import com.example.helloworld.common.Constants.CHATS
-import com.example.helloworld.common.Constants.NOTIFICATION_URL
-import com.example.helloworld.common.Constants.SERVER_KEY
 import com.example.helloworld.common.Constants.USERS
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
 import com.example.helloworld.data.model.Message
-import com.example.helloworld.data.model.User
 import com.example.helloworld.databinding.FragmentMessageBinding
 import com.example.helloworld.ui.viewmodel.MessageViewModel
 import com.example.helloworld.ui.viewmodel.ProfileViewModel
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import dagger.hilt.android.AndroidEntryPoint
-import org.json.JSONObject
 
 
 /**
@@ -61,7 +53,11 @@ class MessageFragment : Fragment() {
     private val profileViewModel : ProfileViewModel by viewModels()
 
 
-    override fun onCreateView(inflater: LayoutInflater , container: ViewGroup? , savedInstanceState: Bundle? , ): View {
+    override fun onCreateView(
+        inflater: LayoutInflater ,
+        container: ViewGroup? ,
+        savedInstanceState: Bundle?
+    ): View {
         // Inflate the layout for this fragment
         _binding = FragmentMessageBinding.inflate(layoutInflater , container , false)
         return binding.root
@@ -148,9 +144,29 @@ class MessageFragment : Fragment() {
                     receiverStatus.setTextColor(Color.parseColor("#FF0000"))
                 }
                 receiverStatus.text = user.online
-                receiverImage.setOnClickListener {
-                    val action = MessageFragmentDirections.actionMessageFragmentToContactInfoFragment(user)
-                    findNavController().navigate(action)
+                receiverImage.setOnClickListener { view ->
+                    // Initializing the popup menu and giving the reference as current context
+                    val popupMenu = PopupMenu(requireContext(),view )
+
+                    // Inflating popup menu from popup_menu.xml file
+                    popupMenu.menuInflater.inflate(R.menu.call_menu , popupMenu.menu)
+                    popupMenu.setOnMenuItemClickListener { menuItem ->
+                        when(menuItem.itemId){
+                            R.id.profile -> {
+                                val action = MessageFragmentDirections.actionMessageFragmentToContactInfoFragment(user)
+                                findNavController().navigate(action)
+                            }
+                            R.id.audio_Call -> {
+                                Toast.makeText(requireContext(),menuItem.title, Toast.LENGTH_SHORT).show()
+                            }
+                            R.id.video_call -> {
+                                Toast.makeText(requireContext(),menuItem.title, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        true
+                    }
+                    // Showing the popup menu
+                    popupMenu.show()
                 }
                 if (user.typingStatus == true) {
                     animationView.visibility = View.VISIBLE
@@ -158,7 +174,6 @@ class MessageFragment : Fragment() {
                 } else {
                     animationView.cancelAnimation()
                     animationView.visibility = View.GONE
-
                 }
             }
         }
@@ -203,5 +218,6 @@ class MessageFragment : Fragment() {
                 firebaseAuth.uid!!).child("online")
         databaseReference.setValue(status)
     }
+
 }
 
