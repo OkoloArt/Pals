@@ -1,9 +1,14 @@
 package com.example.helloworld.common.services
 
+import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Intent
+import android.content.ServiceConnection
 import android.media.RingtoneManager
 import android.os.Build
+import android.os.IBinder
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -18,12 +23,16 @@ import com.example.helloworld.common.Constants.RECEIVER_IMAGE
 import com.example.helloworld.common.Constants.RECEIVER_NAME
 import com.example.helloworld.common.Constants.RESULT_KEY
 import com.example.helloworld.common.Constants.USERS
+import com.example.helloworld.common.services.SinchService.Companion.sinchClient
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
 import com.example.helloworld.data.model.User
 import com.example.helloworld.ui.fragments.MessageFragmentArgs
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.sinch.android.rtc.SinchPush
+import com.sinch.android.rtc.SinchPush.queryPushNotificationPayload
+import com.sinch.android.rtc.calling.CallNotificationResult
 import kotlin.random.Random
 
 class NotificationService : FirebaseMessagingService() {
@@ -41,30 +50,67 @@ class NotificationService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        if (remoteMessage.data.isNotEmpty()) {
-            val map: Map<String, String> = remoteMessage.data
-            val title = map["title"]
-            val message = map["message"]
-            val hisId = map["hisId"]
-            val hisImage = map["hisImage"]
-            val chatUid = map["chatId"]
+            if (remoteMessage.data.isNotEmpty()) {
+                if (SinchPush.isSinchPushPayload(remoteMessage.data)) {
+                    val result = try {
+                        queryPushNotificationPayload(applicationContext, remoteMessage.data)
+                    } catch (e: Exception) {
+                        Log.e(TAG , "Error while executing queryPushNotificationPayload" , e)
+                        return
+                    }
 
-            receiver.apply {
-                username = title
-                chatId = chatUid
-                userId = hisId
-                image = hisImage
+                    object : ServiceConnection {
+                        private var callNotificationResult: CallNotificationResult? = null
+
+                        override fun onServiceConnected(name: ComponentName , service: IBinder) {
+                            callNotificationResult?.let {
+                                val sinchService = service as SinchService.SinchServiceInterface
+                                try {
+                               //     sinchService.relayRemotePushNotificationPayload(it)
+                                } catch (e: Exception) {
+                                    Log.e(TAG, "Error while executing relayRemotePushNotificationPayload", e)
+                                }
+                            }
+                            callNotificationResult = null
+                        }
+
+                        override fun onServiceDisconnected(name: ComponentName) {}
+
+                        fun relayCallNotification(callNotificationResult: CallNotificationResult) {
+                            this.callNotificationResult = callNotificationResult
+                           // createNotificationChannel(NotificationManager.IMPORTANCE_MAX)
+                            applicationContext.bindService(
+                                    Intent(applicationContext, SinchService::class.java), this,
+                                    BIND_AUTO_CREATE
+                            )
+                        }
+                    }.relayCallNotification(result)
+                }
+                else {
+                val map: Map<String, String> = remoteMessage.data
+                val title = map["title"]
+                val message = map["message"]
+                val hisId = map["hisId"]
+                val hisImage = map["hisImage"]
+                val chatUid = map["chatId"]
+
+                receiver.apply {
+                    username = title
+                    chatId = chatUid
+                    userId = hisId
+                    image = hisImage
+                }
+
+                val args = MessageFragmentArgs(receiver).toBundle()
+
+                val pendingIntent = NavDeepLinkBuilder(applicationContext)
+                    .setGraph(R.navigation.nav_graph)
+                    .setArguments(args)
+                    .setDestination(R.id.messageFragment)
+                    .createPendingIntent()
+
+                createNormalNotification(title!!, message!!,hisId!!,chatUid!!, hisImage!!, pendingIntent)
             }
-
-            val args = MessageFragmentArgs(receiver).toBundle()
-
-            val pendingIntent = NavDeepLinkBuilder(applicationContext)
-                .setGraph(R.navigation.nav_graph)
-                .setArguments(args)
-                .setDestination(R.id.messageFragment)
-                .createPendingIntent()
-
-            createNormalNotification(title!!, message!!,hisId!!,chatUid!!, hisImage!!, pendingIntent)
         }
     }
 
@@ -126,7 +172,10 @@ class NotificationService : FirebaseMessagingService() {
         with(NotificationManagerCompat.from(this)) {
             notify(notificationId, builder.build())
         }
+    }
 
+    companion object{
+        const val TAG = "NotificationService"
     }
 
 }

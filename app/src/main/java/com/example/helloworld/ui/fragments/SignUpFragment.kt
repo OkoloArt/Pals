@@ -29,9 +29,6 @@ class SignUpFragment : Fragment()
 
     private val userViewModel: UserViewModel by viewModels()
 
-    @Inject
-    lateinit var userPreferences: UserPreferences
-
     override fun onCreateView(
         inflater: LayoutInflater , container: ViewGroup? ,
         savedInstanceState: Bundle? ,

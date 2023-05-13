@@ -11,18 +11,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/core" />
-            <option value="$PROJECT_DIR$/core/common" />
-            <option value="$PROJECT_DIR$/core/data" />
-            <option value="$PROJECT_DIR$/core/domain" />
-            <option value="$PROJECT_DIR$/core/model" />
-            <option value="$PROJECT_DIR$/core/network" />
-            <option value="$PROJECT_DIR$/core/views" />
-            <option value="$PROJECT_DIR$/features" />
-            <option value="$PROJECT_DIR$/features/authentication" />
-            <option value="$PROJECT_DIR$/features/chats" />
-            <option value="$PROJECT_DIR$/features/settings" />
-            <option value="$PROJECT_DIR$/uikit-kotlin" />
           </set>
         </option>
       </GradleProjectSettings>

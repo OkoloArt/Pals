@@ -1,3 +1,5 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+
 pluginManagement {
     resolutionStrategy {
         eachPlugin {
@@ -10,28 +12,21 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
+
     }
 }
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-        maven {url 'https://jitpack.io'}
-        maven { url "https://dl.cloudsmith.io/public/cometchat/cometchat-pro-android/maven/" }
-    }
-}
+//dependencyResolutionManagement {
+//    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+//}
+//dependencyResolutionManagement {
+//    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+//    repositories {
+//        google()
+//        mavenCentral()
+//        maven {url 'https://jitpack.io'}
+//        maven { url "https://dl.cloudsmith.io/public/cometchat/cometchat-pro-android/maven/" }
+//    }
+//}
+
 rootProject.name = "Hello World"
 include ':app'
-include ':core'
-include ':features'
-include ':features:settings'
-include ':core:data'
-include ':features:chats'
-include ':core:domain'
-include ':core:model'
-include ':core:common'
-include ':features:authentication'
-include ':uikit-kotlin'
-include ':core:views'
-include ':core:network'

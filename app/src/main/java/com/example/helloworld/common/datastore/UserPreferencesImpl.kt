@@ -21,19 +21,32 @@ class UserPreferencesImpl @Inject constructor(
         .catch { exception ->
             exception.localizedMessage?.let { Log.e(tag , it) }
             emit(emptyPreferences())
-        }
-        .map { preferences ->
+        }.map { preferences ->
             preferences[PreferencesKeys.UID]
         }
 
-    override suspend fun saveUid(uid: String)
-    {
+    override suspend fun saveUid(uid: String) {
         dataStorePreferences.edit { preferences ->
             preferences[PreferencesKeys.UID] = uid
         }
     }
 
+    override val token: Flow<String?> = dataStorePreferences.data
+        .catch { exception ->
+            exception.localizedMessage?.let { Log.e(tag , it) }
+            emit(emptyPreferences())
+        }.map { preferences ->
+            preferences[PreferencesKeys.TOKEN]
+        }
+
+    override suspend fun saveToken(token: String) {
+        dataStorePreferences.edit { preferences ->
+            preferences[PreferencesKeys.TOKEN] = token
+        }
+    }
+
     private object PreferencesKeys {
         val UID = stringPreferencesKey(name = "uid")
+        val TOKEN = stringPreferencesKey(name = "token")
     }
 }
