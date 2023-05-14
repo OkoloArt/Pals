@@ -107,5 +107,9 @@ dependencies {
     implementation(name:'sinch-android-rtc', version:'+', ext:'aar')
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    // Event Bus
+    implementation 'org.greenrobot:eventbus:3.1.1'
 
+    //Stories Progress View
+    implementation 'com.github.shts:StoriesProgressView:2.0.0'
 }

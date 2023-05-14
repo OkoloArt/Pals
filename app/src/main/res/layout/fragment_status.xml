@@ -3,12 +3,99 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/black"
     tools:context=".ui.fragments.StatusFragment">
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/view_pager"
+    <ImageView
+        android:layout_below="@id/stories"
+        android:layout_marginStart="10dp"
+        android:id="@+id/back"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:padding="5dp"
+        android:src="@drawable/ic_arrow_back" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/receiver_image"
+        android:layout_width="40dp"
+        android:layout_alignTop="@id/back"
+        app:civ_border_width="1dp"
+        app:civ_border_color="@color/white"
+        android:layout_toRightOf="@id/back"
+        android:layout_height="40dp"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/husky" />
+
+    <LinearLayout
+        android:id="@+id/text_display"
+        android:layout_width="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_alignTop="@id/back"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_toRightOf="@id/receiver_image">
+
+        <TextView
+            android:id="@+id/status_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Arthur"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/status_time"
+            android:layout_width="match_parent"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:text="Toady, 17:21"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:contentDescription="@null"
+        android:layout_centerInParent="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/husky" />
+
+    <!--on below line we are creating
+        linear layout for our views-->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true" />
+        android:orientation="horizontal">
+
+        <!--view to handle move to previous image-->
+        <View
+            android:id="@+id/reverse"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <!--view to move to the next image-->
+        <View
+            android:id="@+id/skip"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <!--below widget is use to create indicator for our stories at top-->
+    <jp.shts.android.storiesprogressview.StoriesProgressView
+        android:id="@+id/stories"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_gravity="top"
+        android:layout_marginTop="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp" />
 
 </RelativeLayout>
