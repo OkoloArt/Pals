@@ -83,6 +83,12 @@
         <action
             android:id="@+id/action_messageFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_messageFragment_to_callScreenFragment"
+            app:destination="@id/callScreenFragment" />
+        <action
+            android:id="@+id/action_messageFragment_to_incomingCallFragment"
+            app:destination="@id/incomingCallFragment" />
     </fragment>
     <fragment
         android:id="@+id/statusFragment"
@@ -112,4 +118,18 @@
             android:id="@+id/action_splashFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/incomingCallFragment"
+        android:name="com.example.helloworld.ui.fragments.IncomingCallFragment"
+        android:label="fragment_call"
+        tools:layout="@layout/fragment_call" >
+        <argument
+            android:name="callId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/callScreenFragment"
+        android:name="com.example.helloworld.ui.fragments.CallScreenFragment"
+        android:label="fragment_call_screen"
+        tools:layout="@layout/fragment_call_screen" />
 </navigation>

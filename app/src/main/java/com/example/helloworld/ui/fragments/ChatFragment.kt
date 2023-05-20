@@ -2,6 +2,7 @@ package com.example.helloworld.ui.fragments
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,17 +10,24 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.helloworld.R
 import com.example.helloworld.adapter.ChatAdapter
 import com.example.helloworld.adapter.StatusAdapter
+import com.example.helloworld.common.Constants
 import com.example.helloworld.common.Constants.CHAT_LIST
 import com.example.helloworld.common.Constants.USERS
+import com.example.helloworld.common.services.SinchService
 import com.example.helloworld.common.utils.AppUtil.Companion.getMobileContacts
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
@@ -34,11 +42,16 @@ import com.example.helloworld.ui.viewmodel.ContactViewModel
 import com.example.helloworld.ui.viewmodel.ProfileViewModel
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.karumi.dexter.listener.single.PermissionListener
+import com.sinch.android.rtc.PushTokenRegistrationCallback
+import com.sinch.android.rtc.SinchClient
+import com.sinch.android.rtc.SinchError
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
@@ -53,7 +66,8 @@ import kotlin.random.Random
  * create an instance of this fragment.
  */
 @AndroidEntryPoint
-class ChatFragment : Fragment() {
+class ChatFragment : BaseFragment(),  SinchService.StartFailedListener,
+    PushTokenRegistrationCallback {
 
     private var _binding : FragmentChatBinding? = null
     private val binding get() = _binding!!
@@ -66,10 +80,7 @@ class ChatFragment : Fragment() {
 
     private var imageUri: Uri? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater , container: ViewGroup? ,
-        savedInstanceState: Bundle? ,
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater , container: ViewGroup? , savedInstanceState: Bundle? , ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentChatBinding.inflate(layoutInflater , container , false)
         return binding.root
@@ -80,12 +91,14 @@ class ChatFragment : Fragment() {
 
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
 
+        createClient(firebaseAuth.uid!!)
+
         binding.addMessage.setOnClickListener {
             val action = ChatFragmentDirections.actionChatFragmentToContactsFragment()
             findNavController().navigate(action)
         }
         readChat()
-        setUpStatusRecyclerview()
+        checkRuntimePermissions()
 
         profileViewModel.getUser().observe(viewLifecycleOwner){ currentUser ->
             bindDetail(currentUser)
@@ -142,6 +155,27 @@ class ChatFragment : Fragment() {
         return firebaseAuth.uid
     }
 
+    private fun checkRuntimePermissions(){
+        Dexter.withContext(requireContext())
+            .withPermissions(Manifest.permission.WRITE_CONTACTS, Manifest.permission.READ_CONTACTS)
+            .withListener(object : MultiplePermissionsListener
+                          {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport) {
+                    if (report.areAllPermissionsGranted()) {
+                        setUpStatusRecyclerview()
+                        setClient()
+                    }
+                    if (report.isAnyPermissionPermanentlyDenied){}
+                }
+                override fun onPermissionRationaleShouldBeShown(list: List<PermissionRequest> , permissionToken: PermissionToken) {
+                    permissionToken.continuePermissionRequest()
+                }
+            }).withErrorListener {
+                Toast.makeText(requireContext(), "Error occurred! ", Toast.LENGTH_SHORT).show()
+            }
+            .onSameThread().check()
+    }
+
     override fun onResume() {
         super.onResume()
         if (this::chatAdapter.isInitialized){
@@ -179,7 +213,6 @@ class ChatFragment : Fragment() {
         }
     }
 
-
     private var pickImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             // There are no request codes
@@ -198,47 +231,6 @@ class ChatFragment : Fragment() {
                 or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
                 or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         pickImageLauncher.launch(gallery)
-    }
-
-    private fun uploadImages(imageFiles: List<File> , dates: List<Date> , onComplete: () -> Unit) {
-        val imageCount = imageFiles.size
-
-        // Iterate over the list of image files and upload each one with its corresponding date
-        imageFiles.forEachIndexed { index, file ->
-            val imageUri = Uri.fromFile(file)
-            val imageName = "image_$index.jpg"
-            val date = dates[index]
-            val dateStr = date.toString() // You can format the date string as desired
-
-            // Create a reference to the image file in Firebase Cloud Storage
-            val imageRef = storageRef!!.child("images/$imageName")
-
-            // Upload the image file to Firebase Cloud Storage
-            imageRef.putFile(imageUri)
-                .addOnSuccessListener { taskSnapshot ->
-                    // Get the download URL of the uploaded image
-                    imageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
-                        val imageUrl = downloadUrl.toString()
-
-                        // Create a map to store the image and date data
-                        val data = hashMapOf(
-                                "image_url" to imageUrl,
-                                "date" to dateStr
-                        )
-
-                        // Store the image and date data in Firebase Firestore or Realtime Database, for example
-                        // ...
-
-                        if (index == imageCount - 1) {
-                            onComplete() // Call the onComplete callback when all images have been uploaded
-                        }
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    // Handle any errors that occur during the upload process
-                    // ...
-                }
-        }
     }
 
     private fun uploadImage(image: Uri) {
@@ -273,5 +265,49 @@ class ChatFragment : Fragment() {
             }
     }
 
+    override fun onFailed(error: SinchError) {
+        Toast.makeText(requireContext(), error.toString(), Toast.LENGTH_LONG).show()
+    }
+
+    override fun onStarted() {
+        Toast.makeText(requireContext(),"Client Started Successfully", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onServiceConnected() {
+        if (sinchServiceInterface?.isStarted == true) {
+            Toast.makeText(requireContext(),"Client Started Successfully", Toast.LENGTH_SHORT).show()
+        } else {
+            sinchServiceInterface?.setStartListener(this)
+        }
+    }
+
+    private fun startSinchClient() {
+        // Start Sinch Client, it'll result onStarted() callback from where the place call
+        // activity will be started
+        if (sinchServiceInterface?.isStarted == false) {
+            sinchServiceInterface?.startClient()
+        }
+    }
+
+    private fun setClient(){
+        sinchServiceInterface?.username = getUID()!!
+        startSinchClient()
+    }
+
+    override fun onPushTokenRegistered() {
+    }
+
+    override fun onPushTokenRegistrationFailed(error: SinchError) {
+
+    }
+
+    private fun createClient(username: String) {
+        SinchService.sinchClient = SinchClient.builder().context(requireContext())
+            .userId(username)
+            .applicationKey(Constants.APP_KEY)
+            .environmentHost(SinchService.ENVIRONMENT)
+            .pushNotificationDisplayName("User $username")
+            .build()
+    }
 
 }

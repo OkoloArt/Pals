@@ -9,4 +9,16 @@
     <string name="hint_message">Type a message</string>
     <string name="channel_name">pals_channel</string>
     <string name="channel_description">pals_description</string>
+
+    <string name="enter_callee_id">Enter callee id</string>
+    <string name="logged_in_as">Logged in as: </string>
+    <string name="call">Call</string>
+    <string name="login">Login</string>
+    <string name="logout">Logout</string>
+    <string name="enter_your_id">Enter your user id</string>
+    <string name="incoming_call">Incoming call</string>
+    <string name="ringing">Ringing</string>
+    <string name="end_call">End call</string>
+    <string name="answer">Answer</string>
+    <string name="decline">Decline</string>
 </resources>

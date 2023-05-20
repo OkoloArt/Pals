@@ -29,10 +29,7 @@ class SignUpFragment : Fragment()
 
     private val userViewModel: UserViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater , container: ViewGroup? ,
-        savedInstanceState: Bundle? ,
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater , container: ViewGroup? , savedInstanceState: Bundle? , ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentSignUpBinding.inflate(layoutInflater,container,false)
         return binding.root
@@ -61,7 +58,6 @@ class SignUpFragment : Fragment()
             result.addOnCompleteListener {
                 if (it.isSuccessful) {
                     uploadData(userEmail,userName)
-                    Toast.makeText(requireContext() , " Module Success" , Toast.LENGTH_SHORT).show()
                     val action = SignUpFragmentDirections.actionSignUpFragmentToChatFragment()
                     findNavController().navigate(action)
                 }else{

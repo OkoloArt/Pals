@@ -1,14 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:weightSum="5"
     tools:context=".ui.fragments.CallFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin_average"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-</FrameLayout>
+        <TextView
+            android:id="@+id/remoteUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/margin_base_plus"
+            android:textColor="@color/sinch_black"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/callState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/incoming_call"
+            android:textAllCaps="false"
+            android:textColor="@color/sinch_black" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/margin_big"
+        android:layout_weight="3"
+        android:padding="0dp"
+        android:src="@drawable/ic_sinch_logotype_black_rgb" />
+
+    <RelativeLayout
+        android:id="@+id/bottomPanel"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/answerButton"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:layout_width="@dimen/incoming_button_width"
+            android:layout_height="@dimen/incoming_button_height"
+            android:layout_toRightOf="@+id/declineButton"
+            android:text="@string/answer"
+            android:textAlignment="center"
+            app:backgroundTint="@color/sinch_answer_green"
+            app:icon="@drawable/ic_outline_local_phone_24"
+            app:iconGravity="textEnd" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/declineButton"
+            style="@style/Widget.MaterialComponents.Button.Icon"
+            android:layout_width="@dimen/incoming_button_width"
+            android:layout_height="@dimen/incoming_button_height"
+            android:layout_marginRight="30dp"
+            android:text="@string/decline"
+            android:textAlignment="center"
+            app:backgroundTint="@color/sinch_decline_red"
+            app:icon="@drawable/ic_outline_call_end_24"
+            app:iconGravity="textEnd" />
+
+    </RelativeLayout>
+
+</LinearLayout>

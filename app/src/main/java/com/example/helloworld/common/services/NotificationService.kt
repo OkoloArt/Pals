@@ -1,6 +1,5 @@
 package com.example.helloworld.common.services
 
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.ComponentName
 import android.content.Intent
@@ -23,7 +22,6 @@ import com.example.helloworld.common.Constants.RECEIVER_IMAGE
 import com.example.helloworld.common.Constants.RECEIVER_NAME
 import com.example.helloworld.common.Constants.RESULT_KEY
 import com.example.helloworld.common.Constants.USERS
-import com.example.helloworld.common.services.SinchService.Companion.sinchClient
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
 import com.example.helloworld.data.model.User
@@ -66,7 +64,7 @@ class NotificationService : FirebaseMessagingService() {
                             callNotificationResult?.let {
                                 val sinchService = service as SinchService.SinchServiceInterface
                                 try {
-                               //     sinchService.relayRemotePushNotificationPayload(it)
+                                    sinchService.relayRemotePushNotificationPayload(it)
                                 } catch (e: Exception) {
                                     Log.e(TAG, "Error while executing relayRemotePushNotificationPayload", e)
                                 }
@@ -115,11 +113,14 @@ class NotificationService : FirebaseMessagingService() {
     }
 
     private fun updateToken(token: String) {
-        val databaseReference = firebaseDatabase.child(USERS).child(firebaseAuth.uid!!)
+        val uid = firebaseAuth.uid ?: return  // Perform null check here
+
+        val databaseReference = firebaseDatabase.child(USERS).child(uid)
         val map: MutableMap<String, Any> = HashMap()
         map["token"] = token
         databaseReference.updateChildren(map)
     }
+
 
     @RequiresApi(Build.VERSION_CODES.S)
     private fun createNormalNotification(title: String , message: String , receiverId: String , chatId: String ,image : String, pendingIntent: PendingIntent) {

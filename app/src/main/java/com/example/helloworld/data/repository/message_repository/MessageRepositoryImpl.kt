@@ -107,8 +107,8 @@ class MessageRepositoryImpl @Inject constructor() : MessageRepository {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()){
                         val secondUser = snapshot.getValue(SecondUser::class.java)
-                        val user = appUtil.mapSecondUserToUser(secondUser!!)
-//                        user!!.userId = snapshot.key
+                        secondUser!!.userId = snapshot.key
+                        val user = appUtil.mapSecondUserToUser(secondUser)
                         callback(user)
                     }
                 }

@@ -20,4 +20,16 @@
 
     <color name="offline">#FF0000</color>
     <color name="online">#00FF00</color>
+
+    <color name="sinch_purple">#ff63029d</color>
+    <color name="grayish">#fff2f1f2</color>
+    <color name="sinch_yellow">#FFBE3C</color>
+    <color name="sinch_black">#272727</color>
+    <color name="sinch_grey">#666666</color>
+    <color name="sinch_mid_grey">#CCCCCC</color>
+    <color name="sinch_green">#007171</color>
+    <color name="sinch_blue">#0A273D</color>
+    <color name="off_white">#F2F2F2</color>
+    <color name="sinch_decline_red">#c62828</color>
+    <color name="sinch_answer_green">#79b700</color>
 </resources>

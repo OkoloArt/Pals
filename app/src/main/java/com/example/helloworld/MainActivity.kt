@@ -9,14 +9,31 @@ import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.helloworld.common.Constants
+import com.example.helloworld.common.datastore.UserPreferences
 import com.example.helloworld.common.utils.FirebaseUtils
 import com.example.helloworld.databinding.ActivityMainBinding
+import com.sinch.android.rtc.*
+import com.sinch.android.rtc.calling.Call
+import com.sinch.android.rtc.calling.CallController
+import com.sinch.android.rtc.calling.CallControllerListener
+import com.sinch.android.rtc.internal.natives.jni.CallClientListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity()
-{
+class MainActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityMainBinding
+
+    private var sinchClient: SinchClient? = null
+    private val serviceScope = CoroutineScope(Dispatchers.Main)
+    var currentToken : String? = null
+
+    @Inject
+    lateinit var userPreferences: UserPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,21 +89,5 @@ class MainActivity : AppCompatActivity()
         }
 
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//        updateOnlineStatus("online")
-//    }
-//
-//    override fun onPause() {
-//        super.onPause()
-//        updateOnlineStatus("offline")
-//    }
-//
-//    private fun updateOnlineStatus(status: String) {
-//        val databaseReference = FirebaseUtils.firebaseDatabase.child(Constants.USERS).child(
-//                FirebaseUtils.firebaseAuth.uid!!).child("online")
-//        databaseReference.setValue(status)
-//    }
 
 }

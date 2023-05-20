@@ -1,19 +1,19 @@
 package com.example.helloworld.ui.fragments
 
 import android.content.Context
+import android.content.Context.BIND_AUTO_CREATE
+import android.content.Intent
 import android.graphics.Color
-import android.graphics.drawable.InsetDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.TypedValue
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.view.menu.MenuBuilder
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -22,8 +22,11 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.helloworld.R
 import com.example.helloworld.adapter.MessageAdapter
+import com.example.helloworld.common.Constants
 import com.example.helloworld.common.Constants.CHATS
 import com.example.helloworld.common.Constants.USERS
+import com.example.helloworld.common.services.SinchService
+import com.example.helloworld.common.services.SinchService.Companion.sinchClient
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
 import com.example.helloworld.data.model.Message
@@ -31,6 +34,7 @@ import com.example.helloworld.databinding.FragmentMessageBinding
 import com.example.helloworld.ui.viewmodel.MessageViewModel
 import com.example.helloworld.ui.viewmodel.ProfileViewModel
 import com.firebase.ui.database.FirebaseRecyclerOptions
+import com.sinch.android.rtc.SinchClient
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -40,7 +44,7 @@ import dagger.hilt.android.AndroidEntryPoint
  * create an instance of this fragment.
  */
 @AndroidEntryPoint
-class MessageFragment : Fragment() {
+class MessageFragment : BaseFragment() {
 
     private var _binding : FragmentMessageBinding? = null
     private val binding get() = _binding!!
@@ -48,16 +52,13 @@ class MessageFragment : Fragment() {
     private val safeArgs : MessageFragmentArgs by navArgs()
     private var chatId : String? = null
 
+    private var isServiceBound = false
+
     private val messageViewModel : MessageViewModel by viewModels()
     private lateinit var messageAdapter: MessageAdapter
     private val profileViewModel : ProfileViewModel by viewModels()
 
-
-    override fun onCreateView(
-        inflater: LayoutInflater ,
-        container: ViewGroup? ,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater , container: ViewGroup? , savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment
         _binding = FragmentMessageBinding.inflate(layoutInflater , container , false)
         return binding.root
@@ -157,7 +158,7 @@ class MessageFragment : Fragment() {
                                 findNavController().navigate(action)
                             }
                             R.id.audio_Call -> {
-                                Toast.makeText(requireContext(),menuItem.title, Toast.LENGTH_SHORT).show()
+                                makeAudioCall(user.userId!!)
                             }
                             R.id.video_call -> {
                                 Toast.makeText(requireContext(),menuItem.title, Toast.LENGTH_SHORT).show()
@@ -218,6 +219,46 @@ class MessageFragment : Fragment() {
                 firebaseAuth.uid!!).child("online")
         databaseReference.setValue(status)
     }
+
+    private fun logoutButtonClicked() {
+        sinchServiceInterface?.unregisterPushToken()
+        sinchServiceInterface?.stopClient()
+    }
+
+    private fun makeAudioCall(userName: String) {
+        if (sinchServiceInterface != null) {
+            val call = sinchServiceInterface?.callUser(userName)
+            val callId = call?.callId
+            if (callId != null) {
+                val action = MessageFragmentDirections.actionMessageFragmentToIncomingCallFragment(callId)
+                findNavController().navigate(action)
+            } else {
+                Log.e(TAG , "Failed to initiate call, callId is null")
+            }
+        } else {
+            Toast.makeText(requireContext(), "Service not connected", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+//    private fun makeAudioCall(userName: String){
+//    val call = sinchServiceInterface?.callUser(userName)
+//    val callId = call?.callId
+//    val callScreen = Intent(requireContext(), IncomingCallFragment::class.java)
+//    callScreen.putExtra(SinchService.CALL_ID, callId)
+//    startActivity(callScreen)
+//    }
+
+    private fun bindService() {
+        val serviceIntent = Intent(requireContext(), SinchService::class.java)
+        requireActivity().applicationContext.bindService(serviceIntent , this , Context.BIND_AUTO_CREATE)
+
+    }
+
+    companion object{
+        private val TAG = MessageFragment::class.java.simpleName
+    }
+
+
 
 }
 

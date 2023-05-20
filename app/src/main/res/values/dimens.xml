@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_small">5dp</dimen>
+    <dimen name="margin_base">10dp</dimen>
+    <dimen name="margin_base_plus">15dp</dimen>
+    <dimen name="margin_average">20dp</dimen>
+    <dimen name="margin_big">40dp</dimen>
+
+    <dimen name="input_layout_bottom">12dp</dimen>
+
+    <dimen name="local_video_width">150dp</dimen>
+    <dimen name="local_video_height">200dp</dimen>
+
+    <dimen name="incoming_button_height">70dp</dimen>
+    <dimen name="incoming_button_width">150dp</dimen>
+
+</resources>
