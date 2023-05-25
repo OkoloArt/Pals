@@ -89,6 +89,9 @@
         <action
             android:id="@+id/action_messageFragment_to_incomingCallFragment"
             app:destination="@id/incomingCallFragment" />
+        <action
+            android:id="@+id/action_messageFragment_to_outgoingCallFragment"
+            app:destination="@id/outgoingCallFragment" />
     </fragment>
     <fragment
         android:id="@+id/statusFragment"
@@ -132,4 +135,13 @@
         android:name="com.example.helloworld.ui.fragments.CallScreenFragment"
         android:label="fragment_call_screen"
         tools:layout="@layout/fragment_call_screen" />
+    <fragment
+        android:id="@+id/outgoingCallFragment"
+        android:name="com.example.helloworld.ui.fragments.OutgoingCallFragment"
+        android:label="fragment_outgoing_call"
+        tools:layout="@layout/fragment_outgoing_call">
+        <argument
+            android:name="callId"
+            app:argType="string" />
+    </fragment>
 </navigation>

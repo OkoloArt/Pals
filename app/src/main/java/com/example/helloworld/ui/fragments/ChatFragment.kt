@@ -2,11 +2,14 @@ package com.example.helloworld.ui.fragments
 
 import android.Manifest
 import android.app.Activity
+import android.app.ActivityManager
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,18 +18,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.helloworld.R
 import com.example.helloworld.adapter.ChatAdapter
 import com.example.helloworld.adapter.StatusAdapter
 import com.example.helloworld.common.Constants
+import com.example.helloworld.common.Constants.APP_KEY
 import com.example.helloworld.common.Constants.CHAT_LIST
+import com.example.helloworld.common.Constants.ENVIRONMENT
+import com.example.helloworld.common.Constants.FCM_SENDER_ID
 import com.example.helloworld.common.Constants.USERS
+import com.example.helloworld.common.datastore.UserPreferences
 import com.example.helloworld.common.services.SinchService
 import com.example.helloworld.common.utils.AppUtil.Companion.getMobileContacts
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
@@ -44,19 +47,19 @@ import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.karumi.dexter.listener.single.PermissionListener
-import com.sinch.android.rtc.PushTokenRegistrationCallback
-import com.sinch.android.rtc.SinchClient
-import com.sinch.android.rtc.SinchError
-import com.squareup.picasso.Picasso
+import com.sinch.android.rtc.*
+import com.sinch.android.rtc.calling.Call
+import com.sinch.android.rtc.calling.CallController
+import com.sinch.android.rtc.calling.CallControllerListener
+import com.sinch.android.rtc.sample.push.JWT
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.File
+import kotlinx.coroutines.launch
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 import kotlin.random.Random
 
 
@@ -67,7 +70,7 @@ import kotlin.random.Random
  */
 @AndroidEntryPoint
 class ChatFragment : BaseFragment(),  SinchService.StartFailedListener,
-    PushTokenRegistrationCallback {
+    PushTokenRegistrationCallback , UserRegistrationCallback {
 
     private var _binding : FragmentChatBinding? = null
     private val binding get() = _binding!!
@@ -78,7 +81,38 @@ class ChatFragment : BaseFragment(),  SinchService.StartFailedListener,
     private lateinit var chatAdapter: ChatAdapter
     private lateinit var statusAdapter: StatusAdapter
 
+    @Inject
+    lateinit var userPreferences: UserPreferences
+
     private var imageUri: Uri? = null
+
+    companion object{
+        var sinchClient : SinchClient? = null
+        private val TAG = ChatFragment::class.java.simpleName
+
+
+        class SinchCallControllerListener(val context: Context) : CallControllerListener {
+
+            override fun onIncomingCall(callController: CallController , call: Call) {
+                Toast.makeText(context, "", Toast.LENGTH_SHORT).show()
+            }
+
+            private fun isAppOnForeground(context: Context): Boolean {
+                val activityManager = context.getSystemService(Service.ACTIVITY_SERVICE) as ActivityManager
+                val appProcesses = activityManager.runningAppProcesses ?: return false
+                val packageName = context.packageName
+                for (appProcess in appProcesses) {
+                    if (appProcess.importance
+                        == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                        && appProcess.processName == packageName
+                    ) {
+                        return true
+                    }
+                }
+                return false
+            }
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater , container: ViewGroup? , savedInstanceState: Bundle? , ): View? {
         // Inflate the layout for this fragment
@@ -90,8 +124,9 @@ class ChatFragment : BaseFragment(),  SinchService.StartFailedListener,
         super.onViewCreated(view , savedInstanceState)
 
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+       //  setClient()
 
-        createClient(firebaseAuth.uid!!)
+        createAndStartSinchClient()
 
         binding.addMessage.setOnClickListener {
             val action = ChatFragmentDirections.actionChatFragmentToContactsFragment()
@@ -163,7 +198,6 @@ class ChatFragment : BaseFragment(),  SinchService.StartFailedListener,
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
                     if (report.areAllPermissionsGranted()) {
                         setUpStatusRecyclerview()
-                        setClient()
                     }
                     if (report.isAnyPermissionPermanentlyDenied){}
                 }
@@ -290,24 +324,98 @@ class ChatFragment : BaseFragment(),  SinchService.StartFailedListener,
     }
 
     private fun setClient(){
-        sinchServiceInterface?.username = getUID()!!
-        startSinchClient()
+        val userId = getUID()!!
+        sinchServiceInterface?.username = userId
+
+        val userController = try {
+            UserController.builder()
+                .context(requireContext())
+                .applicationKey(APP_KEY)
+                .userId(userId)
+                .environmentHost(ENVIRONMENT)
+                .build()
+        } catch (e: IOException) {
+            Log.e(TAG , "Error while building user controller" , e)
+            return
+        }
+        userController.registerUser(this, this)
     }
 
     override fun onPushTokenRegistered() {
+        startSinchClient()
     }
 
     override fun onPushTokenRegistrationFailed(error: SinchError) {
 
     }
 
-    private fun createClient(username: String) {
-        SinchService.sinchClient = SinchClient.builder().context(requireContext())
-            .userId(username)
-            .applicationKey(Constants.APP_KEY)
-            .environmentHost(SinchService.ENVIRONMENT)
-            .pushNotificationDisplayName("User $username")
-            .build()
+    private fun createAndStartSinchClient(){
+        lifecycleScope.launch {
+            userPreferences.token.collect{ token ->
+
+                val userId = firebaseAuth.uid!!
+                sinchClient = SinchClient.builder()
+                    .context(requireContext())
+                    .applicationKey(APP_KEY)
+                    .environmentHost("ocra.api.sinch.com")
+                    .userId(userId)
+                    .pushConfiguration(
+                            PushConfiguration.fcmPushConfigurationBuilder()
+                                .senderID(FCM_SENDER_ID)
+                                .registrationToken(token.orEmpty()).build()
+                    )
+                    .pushNotificationDisplayName("User $userId")
+                    .build()
+
+
+                sinchClient!!.addSinchClientListener(object: SinchClientListener {
+                    override fun onClientStarted(client: SinchClient) { }
+                    override fun onClientFailed(client: SinchClient, error: SinchError) { }
+                    override fun onCredentialsRequired(clientRegistration: ClientRegistration) {
+                        // You have to implement this method, it can't be no-op.
+                        clientRegistration.register(JWT.create(APP_KEY , Constants.APP_SECRET , userId.orEmpty()))
+                    }
+                    override fun onLogMessage(level: Int, area: String, message: String) { }
+                    override fun onPushTokenRegistered() {
+                    }
+
+                    override fun onPushTokenRegistrationFailed(error: SinchError) {
+                        Toast.makeText(requireContext(),"Push Token Failed", Toast.LENGTH_SHORT).show()
+                    }
+
+                    override fun onPushTokenUnregistered() {
+                    }
+
+                    override fun onPushTokenUnregistrationFailed(error: SinchError) {
+                    }
+
+                    override fun onUserRegistered() {
+                        Toast.makeText(requireContext(), "User Registered", Toast.LENGTH_LONG).show()
+                    }
+
+                    override fun onUserRegistrationFailed(error: SinchError) {
+
+                    }
+                })
+                sinchClient!!.callController.addCallControllerListener(SinchCallControllerListener(requireContext()))
+
+                sinchClient!!.start()
+
+            }
+        }
+
+    }
+    override fun onCredentialsRequired(clientRegistration: ClientRegistration) {
+        val userId = firebaseAuth.uid!!
+        clientRegistration.register(JWT.create(APP_KEY , Constants.APP_SECRET , userId.orEmpty()))
+    }
+
+    override fun onUserRegistered() {
+        Toast.makeText(requireContext(), "Registration Successful!", Toast.LENGTH_LONG).show()
+    }
+
+    override fun onUserRegistrationFailed(error: SinchError) {
+        Toast.makeText(requireContext(), "Registration failed!", Toast.LENGTH_LONG).show()
     }
 
 }

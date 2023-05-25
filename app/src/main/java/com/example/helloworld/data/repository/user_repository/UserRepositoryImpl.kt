@@ -58,13 +58,13 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
 
     override fun getAppContacts(user: User, mobileContacts: List<User>, callback: (ArrayList<User>) -> Unit) {
         val appContact = ArrayList<User>()
-        val query = dbUser.orderByChild("username")
+        val query = dbUser.orderByChild("number")
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     for (data in snapshot.children) {
-                        val name = data.child("username").value.toString()
-                        mobileContacts.find { it.username == name && it.username != user.username }?.let {
+                        val number = data.child("number").value.toString()
+                        mobileContacts.find { it.number == number && it.number != user.number }?.let {
                             val secondUser = data.getValue(SecondUser::class.java)
                             secondUser?.userId = data.key
                             val newUser = appUtil.mapSecondUserToUser(secondUser!!)

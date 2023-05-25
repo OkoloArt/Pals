@@ -42,7 +42,6 @@ class SinchService : Service() {
         const val REQUIRED_PERMISSION = "REQUIRED_PERMISSION"
         const val MESSENGER = "MESSENGER"
         const val CALL_ID = "CALL_ID"
-        var sinchClient: SinchClient? = null
     }
 
     private val settings: PersistedSettings by lazy {
@@ -51,7 +50,7 @@ class SinchService : Service() {
     private val sinchServiceInterface: SinchServiceInterface = SinchServiceInterface()
 
     private var messenger: Messenger? = null
-
+    private var sinchClient: SinchClient? = null
     private var listener: StartFailedListener? = null
     private var userId: String? = null
 
@@ -65,6 +64,7 @@ class SinchService : Service() {
             start()
         }
     }
+    
 
     private fun createClient(username: String) {
         userId = username

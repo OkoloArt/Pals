@@ -1,7 +1,6 @@
 package com.example.helloworld.ui.fragments
 
 import android.content.Context
-import android.content.Context.BIND_AUTO_CREATE
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -22,19 +21,18 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.helloworld.R
 import com.example.helloworld.adapter.MessageAdapter
-import com.example.helloworld.common.Constants
 import com.example.helloworld.common.Constants.CHATS
 import com.example.helloworld.common.Constants.USERS
 import com.example.helloworld.common.services.SinchService
-import com.example.helloworld.common.services.SinchService.Companion.sinchClient
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
 import com.example.helloworld.data.model.Message
 import com.example.helloworld.databinding.FragmentMessageBinding
+import com.example.helloworld.ui.fragments.ChatFragment.Companion.sinchClient
 import com.example.helloworld.ui.viewmodel.MessageViewModel
 import com.example.helloworld.ui.viewmodel.ProfileViewModel
 import com.firebase.ui.database.FirebaseRecyclerOptions
-import com.sinch.android.rtc.SinchClient
+import com.sinch.android.rtc.calling.MediaConstraints
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -68,6 +66,8 @@ class MessageFragment : BaseFragment() {
         super.onViewCreated(view , savedInstanceState)
 
         val receiver = safeArgs.contact
+
+        bindService()
 
         if (receiver.chatId != null){
             readMessage(receiver.chatId!!)
@@ -116,6 +116,7 @@ class MessageFragment : BaseFragment() {
             }
 
         onBackPressed()
+        sinchClient!!.callController.addCallControllerListener(ChatFragment.Companion.SinchCallControllerListener(requireContext()))
     }
 
     private fun readMessage(chatUid: String){
@@ -227,10 +228,10 @@ class MessageFragment : BaseFragment() {
 
     private fun makeAudioCall(userName: String) {
         if (sinchServiceInterface != null) {
-            val call = sinchServiceInterface?.callUser(userName)
+            val call = sinchClient?.callController?.callUser(userName , MediaConstraints(false))
             val callId = call?.callId
             if (callId != null) {
-                val action = MessageFragmentDirections.actionMessageFragmentToIncomingCallFragment(callId)
+                val action = MessageFragmentDirections.actionMessageFragmentToOutgoingCallFragment(callId)
                 findNavController().navigate(action)
             } else {
                 Log.e(TAG , "Failed to initiate call, callId is null")
@@ -239,14 +240,6 @@ class MessageFragment : BaseFragment() {
             Toast.makeText(requireContext(), "Service not connected", Toast.LENGTH_SHORT).show()
         }
     }
-
-//    private fun makeAudioCall(userName: String){
-//    val call = sinchServiceInterface?.callUser(userName)
-//    val callId = call?.callId
-//    val callScreen = Intent(requireContext(), IncomingCallFragment::class.java)
-//    callScreen.putExtra(SinchService.CALL_ID, callId)
-//    startActivity(callScreen)
-//    }
 
     private fun bindService() {
         val serviceIntent = Intent(requireContext(), SinchService::class.java)

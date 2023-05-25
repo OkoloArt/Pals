@@ -19,14 +19,18 @@ class AppUtil {
             val mobileContacts = mutableListOf<User>()
             context.contentResolver.query(
                     ContactsContract.CommonDataKinds.Phone.CONTENT_URI ,
-                    arrayOf(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME) ,
+                    arrayOf(
+                            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                            ContactsContract.CommonDataKinds.Phone.NUMBER
+                    ),
                     null ,
                     null ,
                     "${ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME} ASC"
             )?.use { cursor ->
                 while (cursor.moveToNext()) {
                     val name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME))
-                    mobileContacts.add(User(username = name))
+                    val number = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.NUMBER))
+                    mobileContacts.add(User(username = name, number = number))
                 }
             }
             return mobileContacts
