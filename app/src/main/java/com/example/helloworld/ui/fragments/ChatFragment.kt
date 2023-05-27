@@ -297,26 +297,6 @@ class ChatFragment : Fragment() {
             }
     }
 
-    private fun chatCallListerner(){
-        val listenerID:String="UNIQUE_LISTENER_ID"
 
-        CometChat.addCallListener(listenerID,object :CometChat.CallListener(){
-            override fun onOutgoingCallAccepted(p0: Call?) {
-                Log.d(TAG, "Outgoing call accepted: " + p0?.toString())
-            }
-            override fun onIncomingCallReceived(p0: Call?) {
-                Log.d(TAG, "Incoming call: " + p0?.toString())
-            }
-
-            override fun onIncomingCallCancelled(p0: Call?) {
-                Log.d(TAG, "Incoming call cancelled: " + p0?.toString())
-            }
-
-            override fun onOutgoingCallRejected(p0: Call?) {
-                Log.d(TAG, "Outgoing call rejected: " + p0?.toString())
-            }
-
-        })
-    }
 
 }
