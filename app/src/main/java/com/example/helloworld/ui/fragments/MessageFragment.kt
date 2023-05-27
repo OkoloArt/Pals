@@ -116,7 +116,7 @@ class MessageFragment : BaseFragment() {
             }
 
         onBackPressed()
-        sinchClient!!.callController.addCallControllerListener(ChatFragment.Companion.SinchCallControllerListener(requireContext()))
+      //  sinchClient!!.callController.addCallControllerListener(ChatFragment.Companion.SinchCallControllerListener(requireContext()))
     }
 
     private fun readMessage(chatUid: String){

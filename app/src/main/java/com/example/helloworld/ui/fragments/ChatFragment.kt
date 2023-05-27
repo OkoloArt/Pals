@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -69,8 +70,7 @@ import kotlin.random.Random
  * create an instance of this fragment.
  */
 @AndroidEntryPoint
-class ChatFragment : BaseFragment(),  SinchService.StartFailedListener,
-    PushTokenRegistrationCallback , UserRegistrationCallback {
+class ChatFragment : Fragment() {
 
     private var _binding : FragmentChatBinding? = null
     private val binding get() = _binding!!
@@ -124,9 +124,7 @@ class ChatFragment : BaseFragment(),  SinchService.StartFailedListener,
         super.onViewCreated(view , savedInstanceState)
 
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
-       //  setClient()
 
-        createAndStartSinchClient()
 
         binding.addMessage.setOnClickListener {
             val action = ChatFragmentDirections.actionChatFragmentToContactsFragment()
@@ -299,123 +297,26 @@ class ChatFragment : BaseFragment(),  SinchService.StartFailedListener,
             }
     }
 
-    override fun onFailed(error: SinchError) {
-        Toast.makeText(requireContext(), error.toString(), Toast.LENGTH_LONG).show()
-    }
+    private fun chatCallListerner(){
+        val listenerID:String="UNIQUE_LISTENER_ID"
 
-    override fun onStarted() {
-        Toast.makeText(requireContext(),"Client Started Successfully", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onServiceConnected() {
-        if (sinchServiceInterface?.isStarted == true) {
-            Toast.makeText(requireContext(),"Client Started Successfully", Toast.LENGTH_SHORT).show()
-        } else {
-            sinchServiceInterface?.setStartListener(this)
-        }
-    }
-
-    private fun startSinchClient() {
-        // Start Sinch Client, it'll result onStarted() callback from where the place call
-        // activity will be started
-        if (sinchServiceInterface?.isStarted == false) {
-            sinchServiceInterface?.startClient()
-        }
-    }
-
-    private fun setClient(){
-        val userId = getUID()!!
-        sinchServiceInterface?.username = userId
-
-        val userController = try {
-            UserController.builder()
-                .context(requireContext())
-                .applicationKey(APP_KEY)
-                .userId(userId)
-                .environmentHost(ENVIRONMENT)
-                .build()
-        } catch (e: IOException) {
-            Log.e(TAG , "Error while building user controller" , e)
-            return
-        }
-        userController.registerUser(this, this)
-    }
-
-    override fun onPushTokenRegistered() {
-        startSinchClient()
-    }
-
-    override fun onPushTokenRegistrationFailed(error: SinchError) {
-
-    }
-
-    private fun createAndStartSinchClient(){
-        lifecycleScope.launch {
-            userPreferences.token.collect{ token ->
-
-                val userId = firebaseAuth.uid!!
-                sinchClient = SinchClient.builder()
-                    .context(requireContext())
-                    .applicationKey(APP_KEY)
-                    .environmentHost("ocra.api.sinch.com")
-                    .userId(userId)
-                    .pushConfiguration(
-                            PushConfiguration.fcmPushConfigurationBuilder()
-                                .senderID(FCM_SENDER_ID)
-                                .registrationToken(token.orEmpty()).build()
-                    )
-                    .pushNotificationDisplayName("User $userId")
-                    .build()
-
-
-                sinchClient!!.addSinchClientListener(object: SinchClientListener {
-                    override fun onClientStarted(client: SinchClient) { }
-                    override fun onClientFailed(client: SinchClient, error: SinchError) { }
-                    override fun onCredentialsRequired(clientRegistration: ClientRegistration) {
-                        // You have to implement this method, it can't be no-op.
-                        clientRegistration.register(JWT.create(APP_KEY , Constants.APP_SECRET , userId.orEmpty()))
-                    }
-                    override fun onLogMessage(level: Int, area: String, message: String) { }
-                    override fun onPushTokenRegistered() {
-                    }
-
-                    override fun onPushTokenRegistrationFailed(error: SinchError) {
-                        Toast.makeText(requireContext(),"Push Token Failed", Toast.LENGTH_SHORT).show()
-                    }
-
-                    override fun onPushTokenUnregistered() {
-                    }
-
-                    override fun onPushTokenUnregistrationFailed(error: SinchError) {
-                    }
-
-                    override fun onUserRegistered() {
-                        Toast.makeText(requireContext(), "User Registered", Toast.LENGTH_LONG).show()
-                    }
-
-                    override fun onUserRegistrationFailed(error: SinchError) {
-
-                    }
-                })
-                sinchClient!!.callController.addCallControllerListener(SinchCallControllerListener(requireContext()))
-
-                sinchClient!!.start()
-
+        CometChat.addCallListener(listenerID,object :CometChat.CallListener(){
+            override fun onOutgoingCallAccepted(p0: Call?) {
+                Log.d(TAG, "Outgoing call accepted: " + p0?.toString())
             }
-        }
+            override fun onIncomingCallReceived(p0: Call?) {
+                Log.d(TAG, "Incoming call: " + p0?.toString())
+            }
 
-    }
-    override fun onCredentialsRequired(clientRegistration: ClientRegistration) {
-        val userId = firebaseAuth.uid!!
-        clientRegistration.register(JWT.create(APP_KEY , Constants.APP_SECRET , userId.orEmpty()))
-    }
+            override fun onIncomingCallCancelled(p0: Call?) {
+                Log.d(TAG, "Incoming call cancelled: " + p0?.toString())
+            }
 
-    override fun onUserRegistered() {
-        Toast.makeText(requireContext(), "Registration Successful!", Toast.LENGTH_LONG).show()
-    }
+            override fun onOutgoingCallRejected(p0: Call?) {
+                Log.d(TAG, "Outgoing call rejected: " + p0?.toString())
+            }
 
-    override fun onUserRegistrationFailed(error: SinchError) {
-        Toast.makeText(requireContext(), "Registration failed!", Toast.LENGTH_LONG).show()
+        })
     }
 
 }

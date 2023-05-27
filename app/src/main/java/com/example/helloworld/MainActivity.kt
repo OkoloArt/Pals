@@ -28,13 +28,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    private var sinchClient: SinchClient? = null
-    private val serviceScope = CoroutineScope(Dispatchers.Main)
-    var currentToken : String? = null
-
-    @Inject
-    lateinit var userPreferences: UserPreferences
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)

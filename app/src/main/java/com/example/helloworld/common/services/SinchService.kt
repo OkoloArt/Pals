@@ -64,7 +64,6 @@ class SinchService : Service() {
             start()
         }
     }
-    
 
     private fun createClient(username: String) {
         userId = username

@@ -79,10 +79,7 @@ abstract class BaseFragment : Fragment(), ServiceConnection {
         // for subclasses
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         var granted = grantResults.isNotEmpty()
         for (grantResult in grantResults) {
             granted = granted and (grantResult == PackageManager.PERMISSION_GRANTED)
