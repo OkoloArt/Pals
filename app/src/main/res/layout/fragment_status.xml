@@ -65,10 +65,23 @@
         android:scaleType="fitXY"
         android:src="@drawable/husky" />
 
+    <ImageView
+        android:layout_below="@id/stories"
+        android:layout_marginEnd="10dp"
+        android:id="@+id/downloadCurrentImage"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_alignParentEnd="true"
+        android:padding="5dp"
+        android:src="@drawable/ic_baseline_download_24" />
+
     <!--on below line we are creating
         linear layout for our views-->
     <LinearLayout
+        android:layout_below="@id/text_display"
         android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
         android:layout_height="match_parent"
         android:orientation="horizontal">
 

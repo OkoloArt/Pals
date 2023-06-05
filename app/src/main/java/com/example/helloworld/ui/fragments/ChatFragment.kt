@@ -9,29 +9,23 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.Observer
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.helloworld.adapter.ChatAdapter
 import com.example.helloworld.adapter.StatusAdapter
-import com.example.helloworld.common.Constants
-import com.example.helloworld.common.Constants.APP_KEY
 import com.example.helloworld.common.Constants.CHAT_LIST
-import com.example.helloworld.common.Constants.ENVIRONMENT
-import com.example.helloworld.common.Constants.FCM_SENDER_ID
 import com.example.helloworld.common.Constants.USERS
 import com.example.helloworld.common.datastore.UserPreferences
-import com.example.helloworld.common.services.SinchService
 import com.example.helloworld.common.utils.AppUtil.Companion.getMobileContacts
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
@@ -54,10 +48,7 @@ import com.sinch.android.rtc.*
 import com.sinch.android.rtc.calling.Call
 import com.sinch.android.rtc.calling.CallController
 import com.sinch.android.rtc.calling.CallControllerListener
-import com.sinch.android.rtc.sample.push.JWT
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -79,7 +70,7 @@ class ChatFragment : Fragment() {
     private val profileViewModel : ProfileViewModel by viewModels()
     private val contactViewModel : ContactViewModel by viewModels()
     private lateinit var chatAdapter: ChatAdapter
-    private lateinit var statusAdapter: StatusAdapter
+   private lateinit var statusAdapter: StatusAdapter
 
     @Inject
     lateinit var userPreferences: UserPreferences
