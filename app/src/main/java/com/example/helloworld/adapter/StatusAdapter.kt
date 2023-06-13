@@ -10,16 +10,10 @@ import com.squareup.picasso.Picasso
 class StatusAdapter(private val users: List<UserStatus> , private val onItemClicked: (Int) -> Unit):RecyclerView.Adapter<StatusAdapter.StatusViewHolder>(){
 
     class StatusViewHolder(private val bindStatusItemLayoutBinding: StatusItemLayoutBinding): RecyclerView.ViewHolder(bindStatusItemLayoutBinding.root) {
-        private var currentStatus: UserStatus? = null
-
-        fun bind(userStatus: UserStatus) {
+        fun bind(userStatus: UserStatus){
             if (userStatus.status.isNotEmpty()) {
-                val lastStatus = userStatus.status.last()
-                if (currentStatus == null || currentStatus?.status?.lastOrNull() != lastStatus) {
-                    Picasso.get().load(lastStatus.image)
-                        .into(bindStatusItemLayoutBinding.status)
-                }
-                currentStatus = userStatus
+                Picasso.get().load(userStatus.status.last().image)
+                    .into(bindStatusItemLayoutBinding.status)
                 val fullName = userStatus.name!!.split(" ")
                 bindStatusItemLayoutBinding.username.text = fullName[0]
             }

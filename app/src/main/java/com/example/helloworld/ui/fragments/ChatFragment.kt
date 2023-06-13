@@ -13,12 +13,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.helloworld.adapter.ChatAdapter
@@ -35,9 +33,11 @@ import com.example.helloworld.data.model.ImageStatus
 import com.example.helloworld.data.model.User
 import com.example.helloworld.data.model.UserStatus
 import com.example.helloworld.databinding.FragmentChatBinding
+import com.example.helloworld.databinding.StatusItemLayoutBinding
 import com.example.helloworld.ui.viewmodel.ChatViewModel
 import com.example.helloworld.ui.viewmodel.ContactViewModel
 import com.example.helloworld.ui.viewmodel.ProfileViewModel
+import com.firebase.ui.database.FirebaseRecyclerAdapter
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -48,7 +48,10 @@ import com.sinch.android.rtc.*
 import com.sinch.android.rtc.calling.Call
 import com.sinch.android.rtc.calling.CallController
 import com.sinch.android.rtc.calling.CallControllerListener
+import com.sinch.android.rtc.sample.push.JWT
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -70,7 +73,8 @@ class ChatFragment : Fragment() {
     private val profileViewModel : ProfileViewModel by viewModels()
     private val contactViewModel : ContactViewModel by viewModels()
     private lateinit var chatAdapter: ChatAdapter
-   private lateinit var statusAdapter: StatusAdapter
+    private lateinit var statusAdapter: StatusAdapter
+
 
     @Inject
     lateinit var userPreferences: UserPreferences
@@ -155,6 +159,7 @@ class ChatFragment : Fragment() {
             }
         }
     }
+
 
     private fun readChat(){
         val dbChats = firebaseDatabase.child(CHAT_LIST).child(getUID()!!)

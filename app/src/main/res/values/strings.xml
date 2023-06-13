@@ -21,4 +21,8 @@
     <string name="end_call">End call</string>
     <string name="answer">Answer</string>
     <string name="decline">Decline</string>
+    <string name="let_s_get_you_connected">Let\'s Get You Connected</string>
+    <string name="connect_with_people_today">Connect with people today</string>
+    <string name="email">Email</string>
+    <string name="password">password</string>
 </resources>
