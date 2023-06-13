@@ -80,6 +80,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
+    // Also add the dependency for the Google Play services library and specify its version
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
 
     // Dependency FirebaseUI for Firebase Realtime Database
     implementation 'com.firebaseui:firebase-ui-database:8.0.2'
@@ -119,4 +121,5 @@ dependencies {
 
     implementation 'com.cometchat:pro-android-calls-sdk:3.0.0'
     implementation 'com.cometchat:pro-android-chat-sdk:3.0.15'
+
 }

@@ -24,5 +24,7 @@
     <string name="let_s_get_you_connected">Let\'s Get You Connected</string>
     <string name="connect_with_people_today">Connect with people today</string>
     <string name="email">Email</string>
-    <string name="password">password</string>
+    <string name="password">Password</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="full_name">Full name</string>
 </resources>
