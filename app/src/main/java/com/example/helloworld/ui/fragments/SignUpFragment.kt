@@ -84,7 +84,7 @@ class SignUpFragment : Fragment() {
         try {
             val account: GoogleSignInAccount? = completedTask.getResult(ApiException::class.java)
             if (account != null) {
-                UpdateUI(account)
+                updateUI(account)
             }
         } catch (e: ApiException) {
             Toast.makeText(requireContext(), e.toString(), Toast.LENGTH_LONG).show()
@@ -92,7 +92,7 @@ class SignUpFragment : Fragment() {
     }
 
     // this is where we update the UI after Google signin takes place
-    private fun UpdateUI(account: GoogleSignInAccount) {
+    private fun updateUI(account: GoogleSignInAccount) {
         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener { task ->
             if (task.isSuccessful) {

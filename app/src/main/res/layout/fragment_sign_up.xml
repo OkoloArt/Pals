@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="100dp"
         android:textSize="20sp"
         android:text="@string/let_s_get_you_connected"
         app:layout_constraintTop_toTopOf="parent" />
