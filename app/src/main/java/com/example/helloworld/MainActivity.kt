@@ -8,20 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import com.example.helloworld.common.Constants
-import com.example.helloworld.common.datastore.UserPreferences
-import com.example.helloworld.common.utils.FirebaseUtils
 import com.example.helloworld.databinding.ActivityMainBinding
-import com.sinch.android.rtc.*
-import com.sinch.android.rtc.calling.Call
-import com.sinch.android.rtc.calling.CallController
-import com.sinch.android.rtc.calling.CallControllerListener
-import com.sinch.android.rtc.internal.natives.jni.CallClientListener
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
