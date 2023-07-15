@@ -166,6 +166,7 @@
         android:layout_height="wrap_content"
         android:textSize="16sp"
         android:text="@string/login"
+        android:id="@+id/login_button"
         android:layout_marginStart="10dp"
         android:textColor="@android:color/holo_blue_light"
         app:layout_constraintBottom_toBottomOf="@+id/textView11"

@@ -67,6 +67,10 @@ class SignUpFragment : Fragment() {
             apple.setOnClickListener {
 
             }
+            loginButton.setOnClickListener {
+                val action = SignUpFragmentDirections.actionSignUpFragmentToSignInFragment()
+                findNavController().navigate(action)
+            }
         }
     }
 
