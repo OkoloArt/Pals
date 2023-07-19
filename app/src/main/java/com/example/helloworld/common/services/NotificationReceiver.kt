@@ -8,6 +8,8 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.RemoteInput
+import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
 import androidx.navigation.NavDeepLinkBuilder
 import com.example.helloworld.R
 import com.example.helloworld.common.Constants.CHANNEL_ID
@@ -16,6 +18,7 @@ import com.example.helloworld.common.Constants.RECEIVER_ID
 import com.example.helloworld.common.Constants.RECEIVER_IMAGE
 import com.example.helloworld.common.Constants.RECEIVER_NAME
 import com.example.helloworld.common.Constants.RESULT_KEY
+import com.example.helloworld.common.datastore.UserPreferences
 import com.example.helloworld.data.model.User
 import com.example.helloworld.domain.use_cases.GetCurrentUseCase
 import com.example.helloworld.domain.use_cases.SendMessageUseCase
@@ -30,6 +33,8 @@ class NotificationReceiver : BroadcastReceiver() {
     lateinit var sendMessageUseCase: SendMessageUseCase
     @Inject
     lateinit var getCurrentUseCase: GetCurrentUseCase
+    @Inject
+    lateinit var userPreferences: UserPreferences
 
     private val receiver = User()
 
@@ -62,7 +67,7 @@ class NotificationReceiver : BroadcastReceiver() {
                         // Update the notification with the message
                         val notificationManager = NotificationManagerCompat.from(context!!)
                         val notificationId = intent.getIntExtra("NOTIFICATION_ID" , 0)
-                        val notification = createNotification(context , message , sender.username!!, pendingIntent)
+                        val notification = createNotification(context , message , sender.username!! , pendingIntent)
                         notificationManager.notify(notificationId , notification)
                     }
                 }

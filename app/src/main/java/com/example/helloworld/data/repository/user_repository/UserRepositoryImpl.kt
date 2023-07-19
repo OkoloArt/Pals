@@ -33,10 +33,22 @@ class UserRepositoryImpl @Inject constructor() : UserRepository {
     }
 
     override fun updateUser(user: User) {
-     dbUser.child(user.userId!!).setValue(user)
+        val userId = user.userId ?: return // If userId is null, return early
+        val dbUserRef = dbUser.child(userId)
+
+        // Update the properties if they are not null
+        if (user.username != null) {
+            dbUserRef.child("username").setValue(user.username)
+        }
+        if (user.email != null) {
+            dbUserRef.child("email").setValue(user.email)
+        }
+        if (user.number != null) {
+            dbUserRef.child("number").setValue(user.number)
+        }
     }
 
-    override fun getUser(): LiveData<User> {
+        override fun getUser(): LiveData<User> {
         return if (liveData == null) {
             liveData = MutableLiveData()
             dbUser.child(firebaseAuth.uid!!)

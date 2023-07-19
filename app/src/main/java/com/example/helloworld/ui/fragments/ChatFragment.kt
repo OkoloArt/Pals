@@ -160,7 +160,6 @@ class ChatFragment : Fragment() {
         }
     }
 
-
     private fun readChat(){
         val dbChats = firebaseDatabase.child(CHAT_LIST).child(getUID()!!)
         val options = FirebaseRecyclerOptions.Builder<ChatList>()

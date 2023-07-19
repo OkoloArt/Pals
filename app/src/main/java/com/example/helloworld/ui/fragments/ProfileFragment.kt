@@ -5,19 +5,34 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.example.helloworld.data.model.ImageStatus
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
+import com.example.helloworld.R
+import com.example.helloworld.common.Constants.USERS
+import com.example.helloworld.common.datastore.UserPreferences
+import com.example.helloworld.common.utils.FirebaseUtils
+import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
+import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
 import com.example.helloworld.data.model.User
 import com.example.helloworld.databinding.FragmentProfileBinding
 import com.example.helloworld.ui.viewmodel.ProfileViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputLayout
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import java.util.*
+import javax.inject.Inject
+import kotlin.random.Random
 
 /**
  * A simple [Fragment] subclass.
@@ -35,6 +50,12 @@ class ProfileFragment : Fragment() {
 
     private var imageUri: Uri? = null
 
+    private var dayNightMode = false
+    private var receiveNotifications = false
+
+    @Inject
+    lateinit var userPreferences: UserPreferences
+
     override fun onCreateView(
         inflater: LayoutInflater , container: ViewGroup? ,
         savedInstanceState: Bundle? ,
@@ -47,13 +68,24 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View , savedInstanceState: Bundle?) {
         super.onViewCreated(view , savedInstanceState)
 
+        updateData()
         profileViewModel.getUser().observe(viewLifecycleOwner){ user ->
             binding.nameTextview.text = user.username
-     //       Toast.makeText(requireContext(), user.imageStatus!!.size.toString(), Toast.LENGTH_SHORT).show()
+            binding.numberTextView.text = user.number
+            if (!TextUtils.isEmpty(user.image)) {
+                Picasso.get().load(user.image).into(binding.profileImage)
+            } else {
+                // Handle the case when user.image is empty or null
+                Picasso.get().load(R.drawable.husky).into(binding.profileImage)
+            }
             binding.editProfile.setOnClickListener {
                 showDialog(user)
             }
         }
+        binding.setImage.setOnClickListener {
+            setProfileImage()
+        }
+        saveUserPreferenceData()
     }
 
     private var pickImageLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -62,8 +94,8 @@ class ProfileFragment : Fragment() {
             imageUri = result.data?.data
             if (imageUri == null) return@registerForActivityResult
             requireActivity().contentResolver.takePersistableUriPermission(imageUri!! , Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            //        binding.profileImage.setImageURI(imageUri)
-//            imageUri?.let { lifecycleScope.launch { userPreferences.saveProfilePic(it.toString()) }}
+                    binding.profileImage.setImageURI(imageUri)
+            uploadImage(imageUri!!)
         }
     }
 
@@ -75,25 +107,95 @@ class ProfileFragment : Fragment() {
         pickImageLauncher.launch(gallery)
     }
 
-    private fun showDialog(user: User){
+    private fun showDialog(user: User) {
+        val view = requireActivity().layoutInflater.inflate(R.layout.update_user_layout, null)
 
-//        val newItem = ImageStatus("https://images.unsplash.com/photo-1629246999700-1e7ad7a1ba03?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1612&q=80" , "2023-04-10")
-//        user.imageStatus?.add(newItem)
-        user.username = "Death"
         MaterialAlertDialogBuilder(requireContext())
+            .setView(view)
             .setTitle("Update")
             .setMessage("Do you want to update profile")
-            .setNegativeButton("Cancel") { dialog , _ ->
-                // Respond to neutral button press
+            .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.cancel()
             }
-            .setPositiveButton("Ok") { dialog , _ ->
-                // Respond to positive button press
+            .setPositiveButton("Ok") { dialog, _ ->
+                user.apply {
+                    username = view.findViewById<TextInputLayout>(R.id.name).editText?.text.toString()
+                    email = view.findViewById<TextInputLayout>(R.id.email).editText?.text.toString()
+                    number = view.findViewById<TextInputLayout>(R.id.mobile_number).editText?.text.toString()
+                }
                 profileViewModel.updateUser(user)
                 dialog.cancel()
             }
             .show()
+    }
 
+    private fun uploadImage(image: Uri) {
+
+        val number = Random.nextInt(1000)
+        val databaseReference = firebaseDatabase.child(USERS).child(
+                firebaseAuth.uid!!).child("image")
+
+
+        // Create a reference to the image file in Firebase Cloud Storage
+        val imageRef = FirebaseUtils.storageRef.child(getUID()!!+number)
+
+        // Upload the image file to Firebase Cloud Storage
+        imageRef.putFile(image)
+            .addOnSuccessListener { taskSnapshot ->
+                // Get the download URL of the uploaded image
+                imageRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                    val imageUrl = downloadUrl.toString()
+                    // Store the image and date data in Firebase Firestore or Realtime Database, for example
+                    // ...r
+                    databaseReference.setValue(imageUrl)
+
+                }
+            }
+            .addOnFailureListener { exception ->
+                // Handle any errors that occur during the upload process
+                // ...
+            }
+    }
+
+    private fun saveUserPreferenceData(){
+        binding.apply {
+            receiveNotification.setOnCheckedChangeListener { _, isChecked ->
+                receiveNotifications = isChecked
+                lifecycleScope.launch {
+                    userPreferences.saveAllowNotifications(isChecked)
+                }
+            }
+
+            dayNightSwitch.setOnCheckedChangeListener { _, isChecked ->
+                dayNightMode = isChecked
+                lifecycleScope.launch {
+                    userPreferences.saveDayNightTheme(dayNightMode)
+                    AppCompatDelegate.setDefaultNightMode(
+                            if (dayNightMode) AppCompatDelegate.MODE_NIGHT_YES
+                            else AppCompatDelegate.MODE_NIGHT_NO
+                    )
+                }
+            }
+        }
+    }
+
+    private fun updateData(){
+        userPreferences.allowNotifications.asLiveData().observe(viewLifecycleOwner){ allow ->
+            allow?.let {
+                receiveNotifications = allow
+                binding.receiveNotification.isChecked = receiveNotifications
+            }
+        }
+        userPreferences.dayNightTheme.asLiveData().observe(viewLifecycleOwner){ dayNight ->
+            dayNight?.let {
+//                dayNightMode = dayNight
+                binding.dayNightSwitch.isChecked = dayNight
+            }
+        }
+    }
+
+    private fun getUID(): String? {
+        return firebaseAuth.uid
     }
 
 

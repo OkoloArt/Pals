@@ -60,13 +60,13 @@
             android:layout_height="wrap_content">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="60dp"
                 android:id="@+id/status"
-                android:background="@drawable/single_status_background"
-                app:civ_border_color="#ccf896"
-                android:src="@drawable/husky"
+                android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:gravity="center" />
+                android:background="@drawable/single_status_background"
+                android:gravity="center"
+                android:src="@drawable/husky"
+                app:civ_border_color="#ccf896" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/set_status"

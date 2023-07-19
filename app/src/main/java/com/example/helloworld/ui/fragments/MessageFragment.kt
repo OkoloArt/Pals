@@ -16,6 +16,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.asLiveData
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +24,7 @@ import com.example.helloworld.R
 import com.example.helloworld.adapter.MessageAdapter
 import com.example.helloworld.common.Constants.CHATS
 import com.example.helloworld.common.Constants.USERS
+import com.example.helloworld.common.datastore.UserPreferences
 import com.example.helloworld.common.services.SinchService
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseAuth
 import com.example.helloworld.common.utils.FirebaseUtils.firebaseDatabase
@@ -34,6 +36,7 @@ import com.example.helloworld.ui.viewmodel.ProfileViewModel
 import com.firebase.ui.database.FirebaseRecyclerOptions
 import com.sinch.android.rtc.calling.MediaConstraints
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 /**
@@ -50,11 +53,11 @@ class MessageFragment : BaseFragment() {
     private val safeArgs : MessageFragmentArgs by navArgs()
     private var chatId : String? = null
 
-    private var isServiceBound = false
-
     private val messageViewModel : MessageViewModel by viewModels()
     private lateinit var messageAdapter: MessageAdapter
-    private val profileViewModel : ProfileViewModel by viewModels()
+
+    @Inject
+    lateinit var userPreferences: UserPreferences
 
     override fun onCreateView(inflater: LayoutInflater , container: ViewGroup? , savedInstanceState: Bundle?): View {
         // Inflate the layout for this fragment

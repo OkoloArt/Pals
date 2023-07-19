@@ -2,10 +2,7 @@ package com.example.helloworld.common.datastore
 
 import android.util.Log
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -45,8 +42,38 @@ class UserPreferencesImpl @Inject constructor(
         }
     }
 
+    override val dayNightTheme: Flow<Boolean?> = dataStorePreferences.data
+        .catch { exception ->
+            exception.localizedMessage?.let { Log.e(tag , it) }
+            emit(emptyPreferences())
+        }.map { preferences ->
+            preferences[PreferencesKeys.DAYNIGHT]
+        }
+
+    override suspend fun saveDayNightTheme(dayNightTheme: Boolean) {
+        dataStorePreferences.edit { preferences ->
+            preferences[PreferencesKeys.DAYNIGHT] = dayNightTheme
+        }
+    }
+
+    override val allowNotifications: Flow<Boolean?> = dataStorePreferences.data
+        .catch { exception ->
+            exception.localizedMessage?.let { Log.e(tag , it) }
+            emit(emptyPreferences())
+        }.map { preferences ->
+            preferences[PreferencesKeys.NOTIFICATION]
+        }
+
+    override suspend fun saveAllowNotifications(notification: Boolean) {
+        dataStorePreferences.edit { preferences ->
+            preferences[PreferencesKeys.NOTIFICATION] = notification
+        }
+    }
+
     private object PreferencesKeys {
         val UID = stringPreferencesKey(name = "uid")
         val TOKEN = stringPreferencesKey(name = "token")
+        val DAYNIGHT = booleanPreferencesKey(name = "dayNight")
+        val NOTIFICATION = booleanPreferencesKey(name ="notifications")
     }
 }

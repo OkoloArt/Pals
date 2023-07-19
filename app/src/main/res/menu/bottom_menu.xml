@@ -9,7 +9,7 @@
 
     <item
         android:id="@+id/profile"
-        android:icon="@drawable/ic_call"
+        android:icon="@drawable/ic_person"
         android:title="Profile" />
 
 </menu>
