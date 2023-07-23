@@ -135,7 +135,6 @@ class ProfileFragment : Fragment() {
         val databaseReference = firebaseDatabase.child(USERS).child(
                 firebaseAuth.uid!!).child("image")
 
-
         // Create a reference to the image file in Firebase Cloud Storage
         val imageRef = FirebaseUtils.storageRef.child(getUID()!!+number)
 
